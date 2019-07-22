@@ -3,6 +3,8 @@
 date_default_timezone_set("America/New_York");
 
 $GLOBALS["today"] = date("z");
+$GLOBALS["recent_day"] = $today - 5;
+$GLOBALS["yesterday"] = $today - 1;
 
 /*************************************************************/
 
@@ -20,6 +22,7 @@ function update_player($row) {
 	global $days;
 	global $dbconn;
 	global $players;
+	global $this_year;
 
 	$player_id = $row["player_id"];
 	$player_name = $row["FNF"];
@@ -42,45 +45,92 @@ function update_player($row) {
 	// for the player
 	$total_points = get_total_points_from_page($ptype, $stats_page);
 
-	$recent_total_pts = $players_points_current[$player_id][$recent_day];
+	/*************************************************************/
+	// get player's recent point total
 
-	if ($total_points < $recent_total_pts) {
-		echo "\nWarning: today total points are less than recent total points";
+	$query = "SELECT points FROM players_points_current";
+	$query .= " WHERE player_id=" . $player_id;
+	$query .= " AND season=" . $this_year;
+	$query .= " AND day=" . $recent_day;
 
-		$total_points = $recent_total_pts;
+	echo "\n" . $query . "\n";
 
-		$recent_points = 0;
+	$rec_points_res = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	if (mysqli_num_rows($rec_points_res) === 0) {
+		echo "\nWarning: could not find a recent points total.";
+		$recent_points = -1;
 	}
 	else {
-		$recent_points = $total_points - $recent_total_pts;
+
+		$row = mysqli_fetch_array($rec_points_res);
+
+		$recent_points_total = $row["day"];
+
+		echo "\nthe recent points total is: " . $recent_points_total;
+
+		if ($total_points < $recent_points_total) {
+			echo "\nWarning: today total points are less than recent total points";
+		}
+		else {
+			$recent_points = $total_points - $recent_points_total;
+		}
 	}
 
-	$yday_total_pts = $players_points_current[$player_id][$yesterday];
+	/*************************************************************/
+	// get player's yesterday point total
 
-	if ($total_points < $yday_total_pts) {
-		echo "\nWarning: today total points are less than yesterday's total points";
+	$query = "SELECT points FROM players_points_current";
+	$query .= " WHERE player_id=" . $player_id;
+	$query .= " AND season=" . $this_year;
+	$query .= " AND day=" . $yesterday;
 
-		$total_points = $yday_total_pts;
+	echo "\n" . $query . "\n";
 
-		$yesterday_points = 0;
+	$yday_points_res = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	if (mysqli_num_rows($rec_points_res) === 0) {
+		echo "\nWarning: could not find a yesterday points total.";
+		$yday_points = -1;
 	}
 	else {
-		$yesterday_points = $total_points - $yday_total_pts;
-	}
 
-	$players[$player_id]["points"] = $total_points;
+		$row = mysqli_fetch_array($yday_points_res);
+
+		$yday_points_total = $row["day"];
+
+		echo "\nthe yesterday points total is: " . $yday_points_total;
+
+		if ($total_points < $yday_points_total) {
+			echo "\nWarning: today total points are less than yesterday total points";
+		}
+		else {
+			$yday_points = $total_points - $yday_points_total;
+		}
+	}
 
 	echo "\nthe salary is: " . $row["salary"] . "\n";
 
 	$value = intval($points / $row["salary"] / $days * 10000);
 
-	$query = "UPDATE players_current SET Points=" . $total_points;
-	$query .= ", Yesterday=" . $yesterday_points;
-	$query .= ", Recent=" . $recent_points;
-	$query .= ", Updated=" . $GLOBALS["today"];
+	$query = "UPDATE players_current SET points=" . $total_points;
+	$query .= ", yesterday=" . $yday_points;
+	$query .= ", recent=" . $recent_points;
+	$query .= ", updated=" . $GLOBALS["today"];
+	$query .= ", value=" . $value;
 	$query .= ", update_status='updated'";
 	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND season=" . $GLOBALS["this_year"];
+	$query .= " AND Season=" . $GLOBALS["this_year"];
 
 	echo "\n" . $query;
 
@@ -114,7 +164,7 @@ function update_player($row) {
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND season=" . $GLOBALS["this_year"];
 
-	echo "\n" . $query;
+	echo "\n" . $query . "\n";
 
 	mysqli_query($dbconn, $query);
 
