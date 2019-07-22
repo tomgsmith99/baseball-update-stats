@@ -121,7 +121,7 @@ function update_player($row) {
 
 	echo "\nthe salary is: " . $row["salary"] . "\n";
 
-	$value = intval($points / $row["salary"] / $days * 10000);
+	$value = intval($total_points / $row["salary"] / $days * 10000);
 
 	$query = "UPDATE players_current SET points=" . $total_points;
 	$query .= ", yesterday=" . $yday_points;
