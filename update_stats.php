@@ -8,13 +8,14 @@ include "initialize_table.php";
 include "update_single_player_func.php";
 
 $GLOBALS["dbconn"] = get_dbconn();
+$GLOBALS["this_year"] = date("Y");
 $GLOBALS["today"] = date("z");
 
 /*************************************************************/
 
 $dbconn = $GLOBALS["dbconn"];
 
-$this_year = date("Y");
+$this_year = $GLOBALS["this_year"];
 
 $key_string = "<td>" . $this_year . " Regular Season</td>";
 
@@ -69,7 +70,7 @@ for ($i = 1; $i <= $number_of_batches; $i++) {
 
 if (players_are_done()) {
 
-	echo "players are complete. Now updating owners...\n";
+	echo "\nplayers are complete. Now updating owners...\n";
 
 	update_owners();
 

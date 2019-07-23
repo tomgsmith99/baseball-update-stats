@@ -122,6 +122,7 @@ function update_player($row) {
 
 			if ($total_points < $yday_points_total) {
 				echo "\nWarning: today total points are less than yesterday total points";
+				$yday_points = -1;
 			}
 			else {
 				$yday_points = $total_points - $yday_points_total;

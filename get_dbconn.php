@@ -14,10 +14,10 @@ function get_dbconn() {
 	$mysqli = new mysqli($dbhost, $dbusername, $dbpassword, "baseball", $dbport);
 
 	if ($mysqli->connect_error) {
-		echo "could not connect to db.";
+		echo "\nWarning: could not connect to db.\n";
 
 		// did env vars get loaded?
-		echo "the dbhost is: " . $dbhost;
+		echo "\nthe dbhost is: " . $dbhost . "\n";
 
 		die('Connect Error (' . $mysqli->connect_errno . ') '
 			. $mysqli->connect_error);
