@@ -108,7 +108,7 @@ function update_player($row) {
 			exit;
 		}
 
-		if (mysqli_num_rows($rec_points_res) === 0) {
+		if (mysqli_num_rows($yday_points_res) === 0) {
 			echo "\nWarning: could not find a yesterday points total.";
 			$yday_points = -1;
 		}
