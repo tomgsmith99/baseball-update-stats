@@ -1,10 +1,15 @@
 <?php
 
 function get_dbconn() {
-	$dbpassword = getenv("DB_PASSWORD");
-	$dbhost = getenv("DB_HOST");
-	$dbusername = getenv("DB_USERNAME");
-	$dbport = getenv("DB_PORT");
+
+	$raw = file_get_contents(".env.json");
+
+	$vals = json_decode($raw);
+
+	$dbpassword = $vals->DB_PASSWORD;
+	$dbhost = $vals->DB_HOST;
+	$dbusername = $vals->DB_USERNAME;
+	$dbport = $vals->DB_PORT;
 
 	$mysqli = new mysqli($dbhost, $dbusername, $dbpassword, "baseball", $dbport);
 
