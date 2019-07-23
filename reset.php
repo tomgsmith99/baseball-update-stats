@@ -18,4 +18,4 @@ $GLOBALS["today"] = date("z");
 
 /*************************************************************/
 
-initialize_table(0);
+initialize_table();

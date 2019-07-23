@@ -2,11 +2,6 @@
 
 date_default_timezone_set("America/New_York");
 
-// include "get_dbconn.php";
-
-// $GLOBALS["dbconn"] = get_dbconn();
-// $GLOBALS["today"] = date("z");
-
 /*************************************************************/
 
 $dbconn = $GLOBALS["dbconn"];

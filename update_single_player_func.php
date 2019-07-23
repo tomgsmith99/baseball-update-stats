@@ -41,89 +41,100 @@ function update_player($row) {
 	// 3) url contains stats for this year
 	$stats_page = get_stats_page($player_id, $row["URL"]);
 
-	// parse the html of the stats page and calculate the total points
-	// for the player
-	$total_points = get_total_points_from_page($ptype, $stats_page);
+	if ($stats_page == "") {
 
-	/*************************************************************/
-	// get player's recent point total
-
-	$query = "SELECT points FROM players_points_current";
-	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND season=" . $this_year;
-	$query .= " AND day=" . $recent_day;
-
-	echo "\n" . $query . "\n";
-
-	$rec_points_res = mysqli_query($dbconn, $query);
-
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
-
-	if (mysqli_num_rows($rec_points_res) === 0) {
-		echo "\nWarning: could not find a recent points total.";
-		$recent_points = -1;
+		$total_points = 0;
+		$yday_points = 0;
+		$recent_points = 0;
+		$value = 0;
 	}
 	else {
 
-		$row = mysqli_fetch_array($rec_points_res);
+		// parse the html of the stats page and calculate the total points
+		// for the player
+		$total_points = get_total_points_from_page($ptype, $stats_page);
 
-		$recent_points_total = $row["day"];
+		/*************************************************************/
+		// get player's recent point total
 
-		echo "\nthe recent points total is: " . $recent_points_total;
+		$query = "SELECT points FROM players_points_current";
+		$query .= " WHERE player_id=" . $player_id;
+		$query .= " AND season=" . $this_year;
+		$query .= " AND day=" . $recent_day;
 
-		if ($total_points < $recent_points_total) {
-			echo "\nWarning: today total points are less than recent total points";
+		echo "\n" . $query . "\n";
+
+		$rec_points_res = mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
+
+		if (mysqli_num_rows($rec_points_res) === 0) {
+			echo "\nWarning: could not find a recent points total.";
+			$recent_points = -1;
 		}
 		else {
-			$recent_points = $total_points - $recent_points_total;
+
+			$row = mysqli_fetch_array($rec_points_res);
+
+			$recent_points_total = $row["day"];
+
+			echo "\nthe recent points total is: " . $recent_points_total;
+
+			if ($total_points < $recent_points_total) {
+				echo "\nWarning: today total points are less than recent total points";
+			}
+			else {
+				$recent_points = $total_points - $recent_points_total;
+			}
 		}
-	}
 
-	/*************************************************************/
-	// get player's yesterday point total
+		/*************************************************************/
+		// get player's yesterday point total
 
-	$query = "SELECT points FROM players_points_current";
-	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND season=" . $this_year;
-	$query .= " AND day=" . $yesterday;
+		$query = "SELECT points FROM players_points_current";
+		$query .= " WHERE player_id=" . $player_id;
+		$query .= " AND season=" . $this_year;
+		$query .= " AND day=" . $yesterday;
 
-	echo "\n" . $query . "\n";
+		echo "\n" . $query . "\n";
 
-	$yday_points_res = mysqli_query($dbconn, $query);
+		$yday_points_res = mysqli_query($dbconn, $query);
 
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
 
-	if (mysqli_num_rows($rec_points_res) === 0) {
-		echo "\nWarning: could not find a yesterday points total.";
-		$yday_points = -1;
-	}
-	else {
-
-		$row = mysqli_fetch_array($yday_points_res);
-
-		$yday_points_total = $row["day"];
-
-		echo "\nthe yesterday points total is: " . $yday_points_total;
-
-		if ($total_points < $yday_points_total) {
-			echo "\nWarning: today total points are less than yesterday total points";
+		if (mysqli_num_rows($rec_points_res) === 0) {
+			echo "\nWarning: could not find a yesterday points total.";
+			$yday_points = -1;
 		}
 		else {
-			$yday_points = $total_points - $yday_points_total;
+
+			$row = mysqli_fetch_array($yday_points_res);
+
+			$yday_points_total = $row["day"];
+
+			echo "\nthe yesterday points total is: " . $yday_points_total;
+
+			if ($total_points < $yday_points_total) {
+				echo "\nWarning: today total points are less than yesterday total points";
+			}
+			else {
+				$yday_points = $total_points - $yday_points_total;
+			}
 		}
+
+		echo "\nthe salary is: " . $row["salary"] . "\n";
+
+		$value = intval($total_points / $row["salary"] / $days * 10000);
 	}
-
-	echo "\nthe salary is: " . $row["salary"] . "\n";
-
-	$value = intval($total_points / $row["salary"] / $days * 10000);
 
 	$query = "UPDATE players_current SET points=" . $total_points;
+	// $query .= ", checked = "
 	$query .= ", yesterday=" . $yday_points;
 	$query .= ", recent=" . $recent_points;
 	$query .= ", updated=" . $GLOBALS["today"];
@@ -185,7 +196,7 @@ function get_stats_page($player_id, $url) {
 
 		update_player_status($err_msg, $player_id);
 
-		return;
+		return "";
 	}
 	echo "the url is:\n" . $url . "\n";
 
@@ -198,7 +209,7 @@ function get_stats_page($player_id, $url) {
 
 		update_player_status($err_msg, $player_id);
 
-		return;
+		return "";
 	}
 	echo "opened the page.\n";
 
@@ -211,7 +222,7 @@ function get_stats_page($player_id, $url) {
 
 		update_player_status($err_msg, $player_id);
 
-		return;
+		return "";
 	}
 	echo "found the key string.\n";
 

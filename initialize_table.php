@@ -1,17 +1,14 @@
 <?php
 
-function initialize_table($last_checked) {
+function initialize_table() {
 	global $dbconn;
 
-	if ($last_checked < $GLOBALS["today"]) {
+	$query = "UPDATE players_current SET checked=0, updated=0";
 
-		$query = "UPDATE players_current SET checked=0,  updated=0";
+	mysqli_query($dbconn, $query);
 
-		mysqli_query($dbconn, $query);
-
-		if (mysqli_error($dbconn)) {
-			echo mysqli_error($dbconn);
-			exit;
-		}
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
 	}
 }

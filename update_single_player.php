@@ -42,15 +42,3 @@ echo json_encode($row);
 // update player
 
 update_player($row);
-
-
-
-// while ($row = mysqli_fetch_array($batch_of_players)) {
-// 	// update_player($row);
-// 	echo json_encode($row);
-
-// }
-
-
-
-
