@@ -135,7 +135,6 @@ function update_player($row) {
 	}
 
 	$query = "UPDATE players_current SET points=" . $total_points;
-	// $query .= ", checked = "
 	$query .= ", yesterday=" . $yday_points;
 	$query .= ", recent=" . $recent_points;
 	$query .= ", updated=" . $GLOBALS["today"];
