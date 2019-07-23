@@ -77,9 +77,9 @@ function update_player($row) {
 		}
 		else {
 
-			$row = mysqli_fetch_array($rec_points_res);
+			$rec_points_row = mysqli_fetch_array($rec_points_res);
 
-			$recent_points_total = $row["day"];
+			$recent_points_total = $rec_points_row["points"];
 
 			echo "\nthe recent points total is: " . $recent_points_total;
 
@@ -114,9 +114,9 @@ function update_player($row) {
 		}
 		else {
 
-			$row = mysqli_fetch_array($yday_points_res);
+			$yday_points_row = mysqli_fetch_array($yday_points_res);
 
-			$yday_points_total = $row["day"];
+			$yday_points_total = $yday_points_row["points"];
 
 			echo "\nthe yesterday points total is: " . $yday_points_total;
 
