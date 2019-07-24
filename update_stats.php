@@ -5,13 +5,13 @@ date_default_timezone_set("America/New_York");
 $GLOBALS["this_year"] = date("Y");
 $GLOBALS["today"] = date("z");
 
-include "get_batch_of_players.php";
 include "get_dbconn.php";
-include "initialize_table.php";
-include "update_single_player_func.php";
 
 $GLOBALS["dbconn"] = get_dbconn();
 
+include "get_batch_of_players.php";
+include "initialize_table.php";
+include "update_single_player_func.php";
 
 /*************************************************************/
 
