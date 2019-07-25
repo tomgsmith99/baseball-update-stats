@@ -1,0 +1,272 @@
+
+	<div class="row">
+		<div class="col-8">
+
+			<h3 style="margin-top:10px">{{season}} Current Standings</h3>
+
+			<table class="table table-striped">
+				{{owner_rows}}
+			</table>
+
+		</div>
+
+		<div class="col-4">
+
+			<p style="margin-top:10px">Last updated {{last_updated}}</p>
+
+			<hr width="50%">
+
+			<p><a href="{{views}}/view_submit_trade.php">Make a trade</a></p>
+
+			<div class="dropdown">
+				<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Owners {{season}}
+				</button>
+				<div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+					{{owner_drop_down_list}}
+				</div>
+			</div>
+
+			<div id="players_link">
+				<a target = "_blank" href = "{{views}}/view_players_by_year.php?season={{season}}">
+					<button class="btn btn-info" type="button">
+					Players {{season}}
+				</button>
+				</a>
+			</div>
+
+			<div id="players_yesterday style='{{visibility}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "#">Points Yesterday - Owners</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{owners_yesterday}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_yesterday style='{{visibility}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "#">Hot Owners</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{owners_recent}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_yesterday style='{{visibility}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Points Yesterday (picked players)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_yesterday}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_recent style='{{visibility}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Hot Players (picked)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_recent}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_prod">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Most Productive Players (picked)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_points}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_val">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}&category=Points">Most Valuable Players (picked)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_value}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_picked">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = '_blank' href = "{{views}}/view_playersBySeason.php?season={{season}}&category=Picked">Most Popular Players</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_picked}}
+
+					<tbody>
+
+				</table>
+			</div>
+
+			<div id="players_yesterday style='{{show_recent}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Points Yesterday (all players)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_yesterday_all}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_recent style='{{visibility}}'">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Hottest Players (all)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_recent_all}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_prod">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}">Most Productive Players (all)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_points_all}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<div id="players_val">
+
+				<table class="table table-sm table-striped">
+					<thead>
+						<tr>
+							<th colspan="6">
+								<a target = "_blank" href = "{{views}}/view_playersBySeason.php?season={{season}}&category=Points">Most Valuable Players (all)</a>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+					{{players_value_all}}
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+
+		</div>
+	</div>
+
+	{{all_teams}}

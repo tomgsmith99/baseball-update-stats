@@ -2,15 +2,33 @@
 
 date_default_timezone_set("America/New_York");
 
-include "get_batch_of_players.php";
-include "get_dbconn.php";
-include "update_single_player_func.php";
+if (file_exists('/Applications/MAMP/htdocs')) {
+	$base_path = '/Applications/MAMP/htdocs';
+}
+else {
+	$base_path = '/var/www/html';
+}
 
-$GLOBALS["dbconn"] = get_dbconn();
+$dir = "baseball_update_stats";
 
-/*************************************************************/
+define("BASE_PATH", $base_path . "/" . $dir);
 
-$dbconn = $GLOBALS["dbconn"];
+define("INCLUDES_PATH", BASE_PATH . "/includes");
+
+define("QUERIES_PATH", BASE_PATH . "/queries");
+
+set_include_path(INCLUDES_PATH);
+
+include INCLUDES_PATH . "/get_dbconn.php";
+
+$dbconn = get_dbconn();
+
+$this_year = date("Y");
+
+$today = date("z");
+
+include INCLUDES_PATH . "/get_batch_of_players.php";
+include INCLUDES_PATH . "/update_single_player_func.php";
 
 /*************************************************************/
 // get player_id from command line

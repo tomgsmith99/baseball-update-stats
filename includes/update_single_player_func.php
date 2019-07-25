@@ -2,35 +2,24 @@
 
 date_default_timezone_set("America/New_York");
 
-$GLOBALS["today"] = date("z");
-$GLOBALS["recent_day"] = $today - 5;
-$GLOBALS["yesterday"] = $today - 1;
-
 /*************************************************************/
-
-$dbconn = $GLOBALS["dbconn"];
-
-$this_year = date("Y");
 
 $key_string = "<td>" . $this_year . " Regular Season</td>";
 
-$days = $GLOBALS["today"] - 86; // for calculating player value
-
-$today = $GLOBALS["today"];
-
 function update_player($row) {
-	global $days;
 	global $dbconn;
-	global $players;
 	global $this_year;
+	global $today;
+
+	$days = $today - 86;
+
+	$recent_day = $today - 5;
+	$yesterday = $today - 1;
 
 	$player_id = $row["player_id"];
 	$player_name = $row["FNF"];
 	$ptype = $row["p_type"];
 	$pos = $row["pos"];
-
-	$yesterday = $GLOBALS["yesterday"];
-	$recent_day = $GLOBALS["recent_day"];
 
 	echo "\n*************************************\n";
 	echo "the player id is: " . $player_id . "\n";
@@ -137,11 +126,11 @@ function update_player($row) {
 	$query = "UPDATE players_current SET points=" . $total_points;
 	$query .= ", yesterday=" . $yday_points;
 	$query .= ", recent=" . $recent_points;
-	$query .= ", updated=" . $GLOBALS["today"];
+	$query .= ", updated=" . $today;
 	$query .= ", value=" . $value;
 	$query .= ", update_status='updated'";
 	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND Season=" . $GLOBALS["this_year"];
+	$query .= " AND Season=" . $this_year;
 
 	echo "\n" . $query;
 
@@ -152,14 +141,14 @@ function update_player($row) {
 		exit;
 	}
 
-	$id = $player_id . "_" . $GLOBALS["this_year"] . "_" . $GLOBALS["today"];
+	$id = $player_id . "_" . $this_year . "_" . $today;
 
 	$query = "REPLACE players_points_current SET";
 	$query .= " id='" . $id . "'";
 	$query .= ", player_id=" . $player_id;
 	$query .= ", points=" . $total_points;
-	$query .= ", day=" . $GLOBALS["today"];
-	$query .= ", season=" . $GLOBALS["this_year"];
+	$query .= ", day=" . $today;
+	$query .= ", season=" . $this_year;
 
 	echo "\n" . $query;
 
@@ -173,7 +162,7 @@ function update_player($row) {
 	$query = "UPDATE owner_roster_current SET";
 	$query .= " points=(" . $total_points . " - prev_points)";
 	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND season=" . $GLOBALS["this_year"];
+	$query .= " AND season=" . $this_year;
 
 	echo "\n" . $query . "\n";
 

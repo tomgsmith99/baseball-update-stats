@@ -2,7 +2,7 @@
 
 function get_dbconn() {
 
-	$raw = file_get_contents(".env.json");
+	$raw = file_get_contents(BASE_PATH . "/.env.json");
 
 	$vals = json_decode($raw);
 

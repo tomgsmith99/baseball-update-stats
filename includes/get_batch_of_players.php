@@ -1,12 +1,10 @@
 <?php
 
-date_default_timezone_set("America/New_York");
-
 /*************************************************************/
 
-$dbconn = $GLOBALS["dbconn"];
+// $dbconn = $GLOBALS["dbconn"];
 
-$today = $GLOBALS["today"];
+// $today = $GLOBALS["today"];
 
 function get_batch_of_players($batch_size, $player_id=0) {
 	global $dbconn;

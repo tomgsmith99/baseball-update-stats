@@ -1,33 +1,39 @@
 <?php
 
-date_default_timezone_set("America/New_York");
+if (file_exists('/Applications/MAMP/htdocs')) {
+	$base_path = '/Applications/MAMP/htdocs';
+}
+else {
+	$base_path = '/var/www/html';
+}
 
-$GLOBALS["this_year"] = date("Y");
-$GLOBALS["today"] = date("z");
+$dir = "baseball_update_stats";
 
-include "get_dbconn.php";
+define("BASE_PATH", $base_path . "/" . $dir);
 
-$GLOBALS["dbconn"] = get_dbconn();
+define("INCLUDES_PATH", BASE_PATH . "/includes");
 
-include "get_batch_of_players.php";
-include "initialize_table.php";
-include "update_single_player_func.php";
+define("QUERIES_PATH", BASE_PATH . "/queries");
+
+set_include_path(INCLUDES_PATH);
+
+include INCLUDES_PATH . "/get_dbconn.php";
+
+$dbconn = get_dbconn();
+
+$this_year = date("Y");
+
+$today = date("z");
+
+include INCLUDES_PATH . "/get_batch_of_players.php";
+include INCLUDES_PATH . "/initialize_table.php";
+include INCLUDES_PATH . "/update_single_player_func.php";
 
 /*************************************************************/
-
-$dbconn = $GLOBALS["dbconn"];
-
-$this_year = $GLOBALS["this_year"];
-
-$key_string = "<td>" . $this_year . " Regular Season</td>";
 
 $number_of_batches = 30;
 
 $batch_size = 100;
-
-$days = $GLOBALS["today"] - 86; // for calculating player value
-
-$today = $GLOBALS["today"];
 
 $pause_length = 2; // number of seconds to pause between batches
 
@@ -147,7 +153,7 @@ function update_owners() {
 	$this_year = $GLOBALS["this_year"];
 	$today = $GLOBALS["today"];
 
-	$query = file_get_contents("queries/update_current_owners.sql");
+	$query = file_get_contents(QUERIES_PATH . "/update_current_owners.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 
 	echo "\n" . $query . "\n";
@@ -199,7 +205,7 @@ function update_owners() {
 	// update the owners_current table with
 	// yesterday points
 
-	$query = file_get_contents("queries/update_owners_recent_pts.sql");
+	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 	$query = str_replace("{{day}}", ($today - 1), $query);
 	$query = str_replace("{{column}}", "yesterday", $query);
@@ -217,7 +223,7 @@ function update_owners() {
 	// update the owners_current table with
 	// recent points
 
-	$query = file_get_contents("queries/update_owners_recent_pts.sql");
+	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 	$query = str_replace("{{day}}", ($today - 5), $query);
 	$query = str_replace("{{column}}", "recent", $query);
@@ -239,7 +245,7 @@ function update_picked() {
 	/************************************************/
 	// update player acquired totals
 
-	$query = file_get_contents("queries/update_player_picked.sql");
+	$query = file_get_contents(QUERIES_PATH . "/update_player_picked.sql");
 	$query = str_replace("{{column}}", "acquired", $query);
 	$query = str_replace("{{season}}", $this_year, $query);
 
@@ -253,7 +259,7 @@ function update_picked() {
 	/************************************************/
 	// update player drafted totals
 
-	$query = file_get_contents("queries/update_player_picked.sql");
+	$query = file_get_contents(QUERIES_PATH . "/update_player_picked.sql");
 	$query = str_replace("{{column}}", "drafted", $query);
 	$query = str_replace("{{season}}", $this_year, $query);
 
