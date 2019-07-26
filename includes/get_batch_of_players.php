@@ -2,10 +2,6 @@
 
 /*************************************************************/
 
-// $dbconn = $GLOBALS["dbconn"];
-
-// $today = $GLOBALS["today"];
-
 function get_batch_of_players($batch_size, $player_id=0) {
 	global $dbconn;
 	global $today;

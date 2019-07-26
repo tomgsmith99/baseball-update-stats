@@ -20,8 +20,6 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 define("VIEWS", WEB_HOME . "/views");
 
-// include $_SERVER['DOCUMENT_ROOT'] . "/baseball/includes/env.php";
-
 include INCLUDES_PATH . '/get_dbconn.php';
 include INCLUDES_PATH . '/get_all_owners_for_year.php';
 include INCLUDES_PATH . '/get_all_players_for_year.php';
