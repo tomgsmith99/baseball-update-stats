@@ -93,11 +93,13 @@ if (players_are_done()) {
 
 	update_last_updated();
 
-	upload_logs_to_s3();
+	if file_exists('/tmp/cron_debug_log.log') {
+		upload_logs_to_s3();
+	}
 
 	exit;
 }
-else { 
+else {
 	echo "something went wrong. The players are not finished updating.\n";
 	exit;
 }

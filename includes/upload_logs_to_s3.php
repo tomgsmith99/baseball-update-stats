@@ -1,8 +1,6 @@
 <?php
 
-// require INCLUDES_PATH . '/aws.phar';
-
-require '/var/www/html/baseball_update_stats/includes/aws.phar';
+require INCLUDES_PATH . '/aws.phar';
 
 use Aws\S3\S3Client;
 
@@ -10,39 +8,23 @@ use Aws\Exception\AwsException;
 
 function upload_logs_to_s3() {
 
-	// Use the us-east-2 region and latest version of each client.
 	$sharedConfig = [
-	    'profile' => 'baseball',
-	    'region' => 'us-east-1',
-	    'version' => 'latest'
+		'profile' => 'baseball',
+		'region' => 'us-east-1',
+		'version' => 'latest'
 	];
 
-	// Create an SDK class used to share configuration across clients.
 	$sdk = new Aws\Sdk($sharedConfig);
 
-	// Use an Aws\Sdk class to create the S3Client object.
 	$s3Client = $sdk->createS3();
 
 	$filename = date("Y-m-d") . "_" . time() . ".txt";
 
-	// Send a PutObject request and get the result object.
 	$result = $s3Client->putObject([
-	    'Bucket' => 'tomgsmith99-baseball-logs',
-	    // 'Key' => 'my-key2',
-	    'Key' => $filename,
-	    'Body' => file_get_contents('/tmp/cron_debug_log.log')
+		'Bucket' => 'tomgsmith99-baseball-logs',
+		'Key' => $filename,
+		'Body' => file_get_contents('/tmp/cron_debug_log.log')
 	]);
 
 	unlink('/tmp/cron_debug_log.log');
-
-	// // Download the contents of the object.
-	// $result = $s3Client->getObject([
-	//     'Bucket' => 'tomgsmith99-baseball-logs',
-	//     'Key' => 'my-key2'
-	// ]);
-
-	// // Print the body of the result by indexing into the result object.
-	// echo $result['Body'];
-
 }
-
