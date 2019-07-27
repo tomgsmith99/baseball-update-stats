@@ -46,6 +46,8 @@ function update_player($row) {
 		/*************************************************************/
 		// get player's recent point total
 
+		$recent_points = -1;
+
 		$query = "SELECT points FROM players_points_current";
 		$query .= " WHERE player_id=" . $player_id;
 		$query .= " AND season=" . $this_year;
@@ -82,6 +84,8 @@ function update_player($row) {
 
 		/*************************************************************/
 		// get player's yesterday point total
+
+		$yday_points = -1;
 
 		$query = "SELECT points FROM players_points_current";
 		$query .= " WHERE player_id=" . $player_id;
