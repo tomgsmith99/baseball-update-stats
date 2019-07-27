@@ -8,31 +8,41 @@ use Aws\S3\S3Client;
 
 use Aws\Exception\AwsException;
 
-// Use the us-east-2 region and latest version of each client.
-$sharedConfig = [
-    'profile' => 'baseball',
-    'region' => 'us-east-1',
-    'version' => 'latest'
-];
+function upload_logs_to_s3() {
 
-// Create an SDK class used to share configuration across clients.
-$sdk = new Aws\Sdk($sharedConfig);
+	// Use the us-east-2 region and latest version of each client.
+	$sharedConfig = [
+	    'profile' => 'baseball',
+	    'region' => 'us-east-1',
+	    'version' => 'latest'
+	];
 
-// Use an Aws\Sdk class to create the S3Client object.
-$s3Client = $sdk->createS3();
+	// Create an SDK class used to share configuration across clients.
+	$sdk = new Aws\Sdk($sharedConfig);
 
-// Send a PutObject request and get the result object.
-$result = $s3Client->putObject([
-    'Bucket' => 'tomgsmith99-baseball-logs',
-    'Key' => 'my-key2',
-    'Body' => 'this is the body!'
-]);
+	// Use an Aws\Sdk class to create the S3Client object.
+	$s3Client = $sdk->createS3();
 
-// Download the contents of the object.
-$result = $s3Client->getObject([
-    'Bucket' => 'tomgsmith99-baseball-logs',
-    'Key' => 'my-key2'
-]);
+	$filename = date("Y-m-d") . "_" . time();
 
-// Print the body of the result by indexing into the result object.
-echo $result['Body'];
+	// Send a PutObject request and get the result object.
+	$result = $s3Client->putObject([
+	    'Bucket' => 'tomgsmith99-baseball-logs',
+	    // 'Key' => 'my-key2',
+	    'Key' => $filename,
+	    'Body' => file_get_contents('/tmp/cron_debug_log.log');
+	]);
+
+	unlink('/tmp/cron_debug_log.log');
+
+	// // Download the contents of the object.
+	// $result = $s3Client->getObject([
+	//     'Bucket' => 'tomgsmith99-baseball-logs',
+	//     'Key' => 'my-key2'
+	// ]);
+
+	// // Print the body of the result by indexing into the result object.
+	// echo $result['Body'];
+
+}
+

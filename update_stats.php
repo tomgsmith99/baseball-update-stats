@@ -31,7 +31,6 @@ include INCLUDES_PATH . "/update_single_player_func.php";
 
 include INCLUDES_PATH . "/upload_logs_to_s3.php";
 
-
 /*************************************************************/
 
 $number_of_batches = 30;
@@ -48,6 +47,11 @@ $pause_length = 2; // number of seconds to pause between batches
 // echo "last checked is: " . $last_checked;
 
 // exit;
+
+
+upload_logs_to_s3();
+
+exit;
 
 /*************************************************************/
 // if last_checked < today, initialize checked/updated cols
@@ -88,6 +92,8 @@ if (players_are_done()) {
 	update_picked();
 
 	update_last_updated();
+
+	upload_logs_to_s3();
 
 	exit;
 }
