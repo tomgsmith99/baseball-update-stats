@@ -2,7 +2,7 @@
 
 // require INCLUDES_PATH . '/aws.phar';
 
-require INCLUDES_PATH . '/var/www/html/baseball_update_stats/aws.phar';
+require '/var/www/html/baseball_update_stats/aws.phar';
 
 use Aws\S3\S3Client;
 
