@@ -1,4 +1,4 @@
-<?
+<?php
 
 // require INCLUDES_PATH . '/aws.phar';
 
