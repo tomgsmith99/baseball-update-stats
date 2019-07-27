@@ -30,7 +30,7 @@ function upload_logs_to_s3() {
 	    'Bucket' => 'tomgsmith99-baseball-logs',
 	    // 'Key' => 'my-key2',
 	    'Key' => $filename,
-	    'Body' => file_get_contents('/tmp/cron_debug_log.log');
+	    'Body' => file_get_contents('/tmp/cron_debug_log.log')
 	]);
 
 	unlink('/tmp/cron_debug_log.log');
