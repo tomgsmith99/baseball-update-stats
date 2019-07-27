@@ -29,6 +29,9 @@ include INCLUDES_PATH . "/get_batch_of_players.php";
 include INCLUDES_PATH . "/initialize_table.php";
 include INCLUDES_PATH . "/update_single_player_func.php";
 
+include INCLUDES_PATH . "/upload_logs_to_s3.php";
+
+
 /*************************************************************/
 
 $number_of_batches = 30;
