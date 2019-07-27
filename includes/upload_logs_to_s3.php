@@ -23,7 +23,7 @@ function upload_logs_to_s3() {
 	// Use an Aws\Sdk class to create the S3Client object.
 	$s3Client = $sdk->createS3();
 
-	$filename = date("Y-m-d") . "_" . time();
+	$filename = date("Y-m-d") . "_" . time() . ".txt";
 
 	// Send a PutObject request and get the result object.
 	$result = $s3Client->putObject([

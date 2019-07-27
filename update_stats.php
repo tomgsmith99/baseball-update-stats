@@ -49,9 +49,9 @@ $pause_length = 2; // number of seconds to pause between batches
 // exit;
 
 
-upload_logs_to_s3();
+// upload_logs_to_s3();
 
-exit;
+// exit;
 
 /*************************************************************/
 // if last_checked < today, initialize checked/updated cols
