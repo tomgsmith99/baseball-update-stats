@@ -107,10 +107,9 @@ else {
 function update_last_updated() {
 	global $dbconn;
 
-	$dateString = date("l F j, o, g:i a");
+	$update_desc = date("D F jS, o, g:ia");
 
-	$query = "INSERT INTO updates SET Day = " . $GLOBALS["today"] . ", ";
-	$query .= "Time = '" . $dateString . "', Year = " . $GLOBALS["this_year"];
+	$query = "INSERT INTO updates SET update_desc='" . $update_desc . "'";
 
 	echo "\n$query\n";
 
