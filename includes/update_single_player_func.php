@@ -125,6 +125,8 @@ function update_player($row) {
 		echo "\nthe salary is: " . $row["salary"] . "\n";
 
 		$value = intval($total_points / $row["salary"] / $days * 10000);
+
+		update_player_status("found stats", $player_id);
 	}
 
 	$query = "UPDATE players_current SET points=" . $total_points;
@@ -132,7 +134,6 @@ function update_player($row) {
 	$query .= ", recent=" . $recent_points;
 	$query .= ", updated=" . $today;
 	$query .= ", value=" . $value;
-	$query .= ", update_status='updated'";
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND Season=" . $this_year;
 

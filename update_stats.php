@@ -108,8 +108,8 @@ else {
 	exit;
 }
 
-
 function summarize() {
+	global $start_time;
 
 	echo "\n*****************************\n";
 	echo "Summary\n";
