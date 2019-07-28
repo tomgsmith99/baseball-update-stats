@@ -39,6 +39,8 @@ $batch_size = 100;
 
 $pause_length = 2; // number of seconds to pause between batches
 
+$start_time = time();
+
 /*************************************************************/
 // When was the last update?
 
@@ -93,6 +95,8 @@ if (players_are_done()) {
 
 	update_last_updated();
 
+	summarize();
+
 	if (file_exists('/tmp/cron_debug_log.log')) {
 		upload_logs_to_s3();
 	}
@@ -102,6 +106,19 @@ if (players_are_done()) {
 else {
 	echo "something went wrong. The players are not finished updating.\n";
 	exit;
+}
+
+
+function summarize() {
+
+	echo "\n*****************************\n";
+	echo "Summary\n";
+
+	$end_time = time();
+
+	$elapsed_time = $end_time - $start_time;
+
+	echo "\nelapsed time: " . $elapsed_time . " seconds";
 }
 
 function update_last_updated() {

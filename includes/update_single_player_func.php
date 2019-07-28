@@ -178,6 +178,17 @@ function update_player($row) {
 	}
 }
 
+function get_ptype($page) {
+	if (strpos($page, "BLSV") === FALSE) {
+		echo "\nthis is an SP";
+		return "SP";
+	}
+	else {
+		echo "\nthis is an RP";
+		return "RP";
+	}
+}
+
 function get_stats_page($player_id, $url) {
 	global $key_string;
 
@@ -225,6 +236,12 @@ function get_stats_page($player_id, $url) {
 function get_total_points_from_page($ptype, $page) {
 	global $dbconn;
 	global $key_string;
+
+	// get the "real" ptype for a pitcher
+	if ($ptype === "SP" || $ptype === "RP") {
+		echo "\ngetting the real ptype...";
+		$ptype = get_ptype($page);
+	}
 
 	$arr = explode($key_string, $page);
 
