@@ -36,6 +36,22 @@ function update_player($row) {
 		$yday_points = 0;
 		$recent_points = 0;
 		$value = 0;
+
+		$query = "UPDATE players_current SET points=" . $total_points;
+		$query .= ", yesterday=" . $yday_points;
+		$query .= ", recent=" . $recent_points;
+		$query .= ", value=" . $value;
+		$query .= " WHERE player_id=" . $player_id;
+		$query .= " AND Season=" . $this_year;
+
+		echo "\n" . $query;
+
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
 	}
 	else {
 
@@ -126,25 +142,43 @@ function update_player($row) {
 
 		$value = intval($total_points / $row["salary"] / $days * 10000);
 
-		update_player_status("found stats", $player_id);
+		// update_player_status("found stats", $player_id);
+
+		$query = "UPDATE players_current SET points=" . $total_points;
+		$query .= ", yesterday=" . $yday_points;
+		$query .= ", recent=" . $recent_points;
+		$query .= ", update_status='found stats'";
+		$query .= ", updated=" . $today;
+		$query .= ", value=" . $value;
+		$query .= " WHERE player_id=" . $player_id;
+		$query .= " AND Season=" . $this_year;
+
+		echo "\n" . $query;
+
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
 	}
 
-	$query = "UPDATE players_current SET points=" . $total_points;
-	$query .= ", yesterday=" . $yday_points;
-	$query .= ", recent=" . $recent_points;
-	$query .= ", updated=" . $today;
-	$query .= ", value=" . $value;
-	$query .= " WHERE player_id=" . $player_id;
-	$query .= " AND Season=" . $this_year;
+	// $query = "UPDATE players_current SET points=" . $total_points;
+	// $query .= ", yesterday=" . $yday_points;
+	// $query .= ", recent=" . $recent_points;
+	// $query .= ", updated=" . $today;
+	// $query .= ", value=" . $value;
+	// $query .= " WHERE player_id=" . $player_id;
+	// $query .= " AND Season=" . $this_year;
 
-	echo "\n" . $query;
+	// echo "\n" . $query;
 
-	mysqli_query($dbconn, $query);
+	// mysqli_query($dbconn, $query);
 
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
+	// if (mysqli_error($dbconn)) {
+	// 	echo mysqli_error($dbconn);
+	// 	exit;
+	// }
 
 	$id = $player_id . "_" . $this_year . "_" . $today;
 
