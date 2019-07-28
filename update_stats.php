@@ -93,7 +93,7 @@ if (players_are_done()) {
 
 	update_last_updated();
 
-	if file_exists('/tmp/cron_debug_log.log') {
+	if (file_exists('/tmp/cron_debug_log.log')) {
 		upload_logs_to_s3();
 	}
 
