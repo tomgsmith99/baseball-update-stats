@@ -202,6 +202,7 @@ function update_player($row) {
 	$query .= " points=(" . $total_points . " - prev_points)";
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND season=" . $this_year;
+	$query .= " AND benched=0";
 
 	echo "\n" . $query . "\n";
 
