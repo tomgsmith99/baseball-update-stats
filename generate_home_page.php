@@ -50,7 +50,7 @@ $players = get_all_players_for_year();
 
 /************************************************************/
 // get all of this year's owners
-$owners = get_all_owners_for_year($season, "Points DESC");
+$owners = get_all_owners_for_year($season, "Points DESC, Lname ASC, Fname ASC, Suffix ASC");
 
 // echo "the owners are: ";
 
