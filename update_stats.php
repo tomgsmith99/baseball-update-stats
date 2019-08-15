@@ -15,7 +15,9 @@ define("INCLUDES_PATH", BASE_PATH . "/includes");
 
 define("QUERIES_PATH", BASE_PATH . "/queries");
 
-set_include_path(INCLUDES_PATH);
+define("HTML_PATH", BASE_PATH . "/html");
+
+// set_include_path(INCLUDES_PATH);
 
 include INCLUDES_PATH . "/get_dbconn.php";
 
@@ -28,8 +30,8 @@ $today = date("z");
 include INCLUDES_PATH . "/get_batch_of_players.php";
 include INCLUDES_PATH . "/initialize_table.php";
 include INCLUDES_PATH . "/update_single_player_func.php";
-
 include INCLUDES_PATH . "/upload_logs_to_s3.php";
+include INCLUDES_PATH . "/generate_home_page.php";
 
 /*************************************************************/
 
@@ -96,6 +98,8 @@ if (players_are_done()) {
 	update_last_updated();
 
 	summarize();
+
+	write_home_page();
 
 	if (file_exists('/tmp/cron_debug_log.log')) {
 		upload_logs_to_s3();

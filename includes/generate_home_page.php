@@ -1,26 +1,26 @@
 <?php
 
-if (file_exists('/Applications/MAMP/htdocs')) {
-	$base_path = '/Applications/MAMP/htdocs';
-}
-else {
-	$base_path = '/var/www/html';
-}
+// if (file_exists('/Applications/MAMP/htdocs')) {
+// 	$base_path = '/Applications/MAMP/htdocs';
+// }
+// else {
+// 	$base_path = '/var/www/html';
+// }
 
-$dir = "baseball_update_stats";
+// $dir = "baseball_update_stats";
 
-define("WEB_HOME", "/" . $dir);
+// define("WEB_HOME", "/" . $dir);
 
-define("BASE_PATH", $base_path . WEB_HOME);
-define("INCLUDES_PATH", BASE_PATH . "/includes");
+// define("BASE_PATH", $base_path . WEB_HOME);
+// define("INCLUDES_PATH", BASE_PATH . "/includes");
 
-set_include_path(INCLUDES_PATH);
+// set_include_path(INCLUDES_PATH);
 
-define("HTML_PATH", BASE_PATH . "/html");
+// define("HTML_PATH", BASE_PATH . "/html");
 
 define("VIEWS", WEB_HOME . "/views");
 
-include INCLUDES_PATH . '/get_dbconn.php';
+include_once INCLUDES_PATH . '/get_dbconn.php';
 include INCLUDES_PATH . '/get_all_owners_for_year.php';
 include INCLUDES_PATH . '/get_all_players_for_year.php';
 include INCLUDES_PATH . '/get_all_teams_html.php';
@@ -58,7 +58,10 @@ $owners = get_all_owners_for_year($season, "Points DESC, Lname ASC, Fname ASC, S
 
 /************************************************************/
 // Get last update time
-// $c["last_updated"] = get_last_updated();
+
+$c["last_updated"] = get_last_updated();
+
+// echo "the last update is: " . $c["last_updated"];
 
 // /************************************************************/
 // Get owner drop-down list
@@ -156,12 +159,19 @@ foreach ($c as $key => $value) {
 	$page = str_replace("{{" . $key . "}}", $value, $page);
 }
 
+function get_home_page() {
+	global $page;
 
-file_put_contents("index.html", $page);
+	// $file_name = time() . ".html";
 
-// echo $page;
+	// file_put_contents(HTML_PATH . "/home_page/latest.html", $page);
 
-// exit;
+	// file_put_contents(HTML_PATH . "/home_page/" . $file_name, $page);
+
+	write_home_page();
+
+	return $page;
+}
 
 /************************************************************/
 /* stats last updated query
@@ -170,7 +180,7 @@ file_put_contents("index.html", $page);
 function get_last_updated() {
 	global $dbconn;
 
-	$query = "SELECT Time FROM Updates ORDER BY id DESC LIMIT 1";
+	$query = "SELECT update_desc FROM updates ORDER BY time_of_update DESC LIMIT 1";
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -181,5 +191,15 @@ function get_last_updated() {
 
 	$row = mysqli_fetch_assoc($result);
 
-	return $row["Time"];
+	return $row["update_desc"];
+}
+
+function write_home_page() {
+	global $page;
+
+	$file_name = time() . ".html";
+
+	file_put_contents(HTML_PATH . "/home_page/latest.html", $page);
+
+	file_put_contents(HTML_PATH . "/home_page/" . $file_name, $page);
 }
