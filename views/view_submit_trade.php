@@ -240,7 +240,6 @@ if (array_key_exists("confirmed", $_SESSION) && $_SESSION["confirmed"] == 1) {
 	show_page($content);
 
 	exit;
-
 }
 
 function get_new_player() {
@@ -367,7 +366,7 @@ function get_team_form($owner_id) {
 
 	/**************************************************************/
 
-	$fields = ["font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
+	$fields = ["action", "font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
 
 	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_drop.html');
 
@@ -399,6 +398,8 @@ function get_team_form($owner_id) {
 
 		$this_player_html = $player_row_template;
 
+		$row["action"] = VIEWS . "/view_submit_trade.php";
+
 		foreach ($fields as $field) {
 			$this_player_html = str_replace('{{' . $field . '}}', $row[$field], $this_player_html);
 		}
@@ -407,7 +408,6 @@ function get_team_form($owner_id) {
 	}
 
 	/**************************************************************/
-
 	// get benched players
 
 	$benched_players_html = "";
@@ -429,6 +429,8 @@ function get_team_form($owner_id) {
 
 	if (mysqli_num_rows($result) != 0) {
 		while ($row = mysqli_fetch_assoc($result)) {
+
+			$row["action"] = VIEWS . "/view_submit_trade.php";
 
 			$this_player_html = $player_row_template;
 
