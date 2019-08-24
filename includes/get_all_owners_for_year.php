@@ -4,6 +4,8 @@
 /* get all of this year's owners
 /***********************************************************/
 
+if (!($GLOBALS["this_year"])) { $GLOBALS["this_year"] = date("Y"); }
+
 function get_all_owners_for_year($season, $order_by) {
 	global $dbconn;
 

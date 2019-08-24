@@ -27,8 +27,6 @@ define("WEB_HOME", "/" . $dir);
 define("BASE_PATH", $base_path . WEB_HOME);
 define("INCLUDES_PATH", BASE_PATH . "/includes");
 
-set_include_path(INCLUDES_PATH);
-
 define("HTML_PATH", BASE_PATH . "/html");
 
 define("VIEWS", WEB_HOME . "/views");
@@ -38,24 +36,9 @@ include INCLUDES_PATH . '/get_all_owners_for_year.php';
 include INCLUDES_PATH . '/get_all_players_for_year.php';
 include INCLUDES_PATH . '/get_owner_drop_down_list.php';
 
-$GLOBALS["this_year"] = date("Y");
-
 $dbconn = get_dbconn();
 
 $season = date("Y");
-
-// $GLOBALS["season_under_way"] = true;
-
-/************************************************************/
-
-// include $_SERVER['DOCUMENT_ROOT'] . "/baseball/includes/env.php";
-
-// include INCLUDES_PATH . '/get_all_owners_for_year.php';
-// include INCLUDES_PATH . '/get_owner_drop_down_list.php';
-
-// $dbconn = $GLOBALS["dbconn"];
-
-// $season = $GLOBALS["this_year"];
 
 /**************************************************************/
 
@@ -87,7 +70,7 @@ function get_add_player_id() {
 
 		$players = get_player_list();
 
-		$content = str_replace("{{PLAYERS}}", $players, $content);
+		$content = str_replace("{{players}}", $players, $content);
 
 		$fields = ["bank", "budget", "drop_player_fnf", "drop_player_salary", "owner_fnf"];
 
@@ -106,17 +89,13 @@ function get_drop_player_id() {
 		$_SESSION["drop_player_id"] = filter_var($_POST["drop_player_id"], FILTER_SANITIZE_STRING);
 	}
 	if (!(array_key_exists("drop_player_id", $_SESSION) && $_SESSION["drop_player_id"])) {
-		$content = file_get_contents(HTML_PATH . "/get_drop_player_id.html");
-
-		$team = get_team_form($_SESSION["owner_id"], $GLOBALS["this_year"]);
-
-		$content = str_replace("{{TEAM}}", $team, $content);
-
-		show_page($content);
+		get_team_form($_SESSION["owner_id"]);
 	}
 }
 
 function get_owner_id() {
+
+	global $season;
 
 	if (array_key_exists("owner_id", $_POST) && $_POST["owner_id"]) {
 		$_SESSION["owner_id"] = filter_var($_POST["owner_id"], FILTER_SANITIZE_STRING);
@@ -124,7 +103,7 @@ function get_owner_id() {
 	if (!(array_key_exists("owner_id", $_SESSION) && $_SESSION["owner_id"])) {
 		$content = file_get_contents(HTML_PATH . "/get_owner_id.html");
 
-		$owner_drop_down_list = get_owner_drop_down_form($GLOBALS["this_year"]);
+		$owner_drop_down_list = get_owner_drop_down_list($season, 'post');
 
 		$content = str_replace("{{OWNER_LIST}}", $owner_drop_down_list, $content);
 
@@ -158,6 +137,8 @@ function show_page($content) {
 	$page = str_replace("{{TITLE}}", "Diffendorf baseball: Make a trade", $page);
 
 	$page = str_replace("{{CONTENT}}", $content, $page);
+
+	$page = str_replace("{{web_home}}", WEB_HOME, $page);
 
 	echo $page;
 
@@ -194,78 +175,15 @@ if (array_key_exists("confirmed", $_POST) && $_POST["confirmed"]) {
 }
 if (array_key_exists("confirmed", $_SESSION) && $_SESSION["confirmed"] == 1) {
 
-	$day = $GLOBALS["today"];
+	// insert new player into owner_roster_current table
+	$day = date("z");
 
-	$bench_id_col = $_SESSION["bench_col"] . "_ID";
+	$year = date("Y");
 
-	$bench_points_col = $_SESSION["bench_col"] . "_Points";
+	$id = $year . "-" . $_SESSION['owner_id'] . "-" . $_SESSION['add_player_id'];
 
-	$drop_date_col = $_SESSION["bench_col"] . "_Drop";
-
-	$drop_points = $_SESSION["drop_player_points"];
-
-	/**********************************************/
-	// get position of dropped player
-
-	foreach ($GLOBALS["roster_active"] as $pos => $data) {
-		$id_col = $data["col_name"];
-
-		$query = "SELECT * FROM OwnersMain";
-		$query .= " WHERE " . $id_col . "=" . $_SESSION["drop_player_id"];
-		$query .= " AND Owner_ID=" . $_SESSION["owner_id"];
-		$query .= " AND Year=" . $GLOBALS["this_year"];
-
-		echo "<p>$query";
-
-		$result = mysqli_query($dbconn, $query);
-
-		if (mysqli_error($dbconn)) {
-			echo mysqli_error($dbconn);
-			exit;
-		}
-
-		if (mysqli_num_rows($result) === 1) {
-			$start_date_col = $data["col_base"] . "_Start";
-			$add_id_col = $id_col;
-			$add_points_col = $data["col_base"] . "_Points";
-
-			break;
-		}
-	}
-
-	$query = "UPDATE OwnersMain SET " . $bench_id_col . "=" . $_SESSION["drop_player_id"];
-	$query .= ", " . $bench_points_col . "=" . $_SESSION["drop_player_points"];
-	$query .= ", " . $drop_date_col . "=" . $GLOBALS["today"];
-	$query .= ", " . $start_date_col . "=" . $GLOBALS["today"];
-	$query .= ", " . $add_id_col . "=" . $_SESSION["add_player_id"];
-	$query .= ", " . $add_points_col . "=0";
-	$query .= " WHERE Owner_ID=" . $_SESSION["owner_id"];
-	$query .= " AND Year=" . $GLOBALS["season"];
-
-	mysqli_query($dbconn, $query);
-
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
-
-	$page = str_replace("%CONTENT%", "<p>Trade successfully submitted.</p>", $page);
-
-	echo $page;
-
-	exit;
-
-}
-
-exit;
-
-function get_owner_drop_down_form($season) {
-	global $dbconn;
-
-	$query = "SELECT OwnersMain.Owner_ID, Members.LNF FROM OwnersMain, Members ";
-	$query .= "WHERE OwnersMain.Year=" . $season . " ";
-	$query .= "AND OwnersMain.Owner_ID=Members.Member_ID ";
-	$query .= "ORDER BY Members.Lname, Members.Fname ASC";
+	// get current points for added player
+	$query = "SELECT points from players_current WHERE player_id=" . $_SESSION["add_player_id"];
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -274,14 +192,55 @@ function get_owner_drop_down_form($season) {
 		exit;
 	}
 
-	$owners = "";
+	$added_player = mysqli_fetch_assoc($result);
 
-	while ($row = mysqli_fetch_assoc($result)) {
-		$owners .= "<option value='" . $row["Owner_ID"] . "'>";
-		$owners .= $row["LNF"] . "</option>\n";
+	$prev_points = $added_player["points"];
+
+	/*******************************************************/
+
+	$query = "INSERT INTO owner_roster_current SET";
+	$query .= " id='" . $id . "', owner_id=" . $_SESSION["owner_id"];
+	$query .= ", player_id=" . $_SESSION["add_player_id"];
+	$query .= ", start_date=" . $day;
+	$query .= ", bench_date=0, prev_points=" . $prev_points;
+	$query .= ", points=0, season=" . $year;
+	$query .= ", acquired=1, drafted=0, benched=0";
+
+	mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
 	}
 
-	return $owners;
+	/*******************************************************/
+
+	$query = "UPDATE owner_roster_current SET";
+	$query .= " bench_date=" . $day . ", benched=1";
+	$query .= " WHERE owner_id=" . $_SESSION["owner_id"];
+	$query .= " AND season=" . $year;
+	$query .= " AND player_id=" . $_SESSION["drop_player_id"];
+
+	mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	$content = file_get_contents(HTML_PATH . "/trade_success.html");
+
+	$fields = ["add_player_fnf", "add_player_salary", "bank", "budget", "diff", "drop_player_fnf", "drop_player_salary", "new_bank", "owner_fnf"];
+
+	foreach ($fields as $field) {
+		$bullseye = "{{" . $field . "}}";
+		$content = str_replace($bullseye, $_SESSION[$field], $content);
+	}
+
+	show_page($content);
+
+	exit;
+
 }
 
 function get_new_player() {
@@ -289,11 +248,10 @@ function get_new_player() {
 
 	$player_id = $_SESSION["add_player_id"];
 
-	// get the dropped player's position, salary, name
-	$query = "SELECT * FROM Players, ";
-	$query .= $GLOBALS["typt"] . " AS typt";
-	$query .= " WHERE typt.Player_ID=" . $player_id;
-	$query .= " AND typt.Player_ID=Players.Player_ID";
+	$query = "SELECT p.FNF, pc.points, pc.salary";
+	$query .= " FROM players_current AS pc, Players AS p";
+	$query .= " WHERE pc.player_id=" . $player_id;
+	$query .= " AND pc.player_id=p.player_id";
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -306,9 +264,9 @@ function get_new_player() {
 
 	$_SESSION["add_player_fnf"] = $row["FNF"];
 
-	$_SESSION["add_player_salary"] = $row["Salary"];
+	$_SESSION["add_player_salary"] = $row["salary"];
 
-	$_SESSION["add_player_points"] = $row["Points"];
+	$_SESSION["add_player_points"] = $row["points"];
 
 	$_SESSION["diff"] = $_SESSION["add_player_salary"] - $_SESSION["drop_player_salary"];
 
@@ -327,11 +285,10 @@ function get_player_list() {
 	$drop_player_id = $_SESSION["drop_player_id"];
 
 	// get the dropped player's position, salary, name
-	$query = "SELECT typt.Pos, typt.Salary, typt.Points, Players.FNF";
-	$query .= " FROM " . $GLOBALS["typt"] . " AS typt,";
-	$query .= " Players";
-	$query .= " WHERE typt.Player_ID=" . $drop_player_id;
-	$query .= " AND typt.Player_ID=Players.Player_ID";
+	$query = "SELECT pc.pos, pc.salary, p.FNF";
+	$query .= " FROM players_current as pc, Players as p";
+	$query .= " WHERE pc.player_id=" . $drop_player_id;
+	$query .= " AND pc.player_id=p.Player_ID";
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -342,52 +299,23 @@ function get_player_list() {
 
 	$row = mysqli_fetch_assoc($result);
 
-	$_SESSION["drop_player_salary"] = $drop_player_salary = $row["Salary"];
+	$_SESSION["drop_player_salary"] = $drop_player_salary = $row["salary"];
 	$_SESSION["drop_player_fnf"] = $fnf = $row["FNF"];
 	$_SESSION["budget"] = $budget = ($_SESSION["drop_player_salary"] + $_SESSION["bank"]);
-	$_SESSION["drop_player_pos"] = $pos = $row["Pos"];
-	$_SESSION["drop_player_points"] = $row["Points"];
+	$_SESSION["drop_player_pos"] = $pos = $row["pos"];
 
 	// Select all players that are the right position, budget, and
 	// not already on the owner's team
-	$query = "SELECT Players.Player_ID, Players.FNF, typt.Salary";
-	$query .= " FROM Players, " . $GLOBALS["typt"] . " AS typt";
-	$query .= " WHERE Players.Player_ID=typt.Player_ID";
-	$query .= " AND typt.Salary <= " . $budget;
-	$query .= " AND typt.Player_ID != " . $drop_player_id;
-	$query .= " AND typt.Pos = '" . $pos . "'";
 
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT OF1_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT OF2_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT OF3_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT SP1_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT SP2_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " AND typt.Player_ID NOT IN";
-	$query .= " (SELECT SP3_ID";
-	$query .= " FROM OwnersMain WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $GLOBALS["this_year"] . ")";
-
-	$query .= " ORDER BY typt.Salary DESC, Players.Lname ASC";
+	$query = "SELECT pc.player_id, p.FNF, pc.salary, pc.points, pc.team";
+	$query .= " FROM players_current AS pc, Players as p";
+	$query .= " WHERE pc.salary < " . $budget;
+	$query .= " AND pc.pos='" . $pos . "'";
+	$query .= " AND pc.player_id = p.player_id";
+	$query .= " AND pc.player_id NOT IN";
+	$query .= " (SELECT player_id FROM owner_roster_current";
+	$query .= " WHERE owner_id = " . $owner_id . ")";
+	$query .= " ORDER BY pc.salary DESC, p.Lname ASC";
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -398,24 +326,31 @@ function get_player_list() {
 
 	$players = "";
 
+	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_add.html');
+
+	$action = VIEWS . '/view_submit_trade.php';
+
 	while ($row = mysqli_fetch_assoc($result)) {
-		$players .= "<tr>";
-		$players .= "<td>" . $row["FNF"] . "</td>";
-		$players .= "<td align='right'>$" . $row["Salary"] . "</td>";
-		$players .= "<td><input type='radio' name='add_player_id' value='" . $row["Player_ID"] . "'>";
-		$players .= "</td>";
-		$players .= "</tr>\n";
+		$player_row = $player_row_template;
+		$player_row = str_replace('{{FNF}}', $row['FNF'], $player_row);
+		$player_row = str_replace('{{team}}', $row['team'], $player_row);
+		$player_row = str_replace('{{salary}}', $row['salary'], $player_row);
+		$player_row = str_replace('{{player_id}}', $row['player_id'], $player_row);
+		$player_row = str_replace('{{points}}', $row['points'], $player_row);
+		$player_row = str_replace('{{action}}', $action, $player_row);
+
+		$players .= $player_row;
 	}
 
 	return $players;
 }
 
-function get_team_form($owner_id, $season) {
+function get_team_form($owner_id) {
 	global $dbconn;
 
-	$query = "SELECT * FROM OwnersMain, Members WHERE Owner_ID=" . $owner_id;
-	$query .= " AND Year=" . $season;
-	$query .= " AND OwnersMain.Owner_ID = Members.Member_ID";
+	$query = "SELECT * FROM owners_current AS oc, owners AS o";
+	$query .= " WHERE o.owner_id=" . $owner_id;
+	$query .= " AND o.owner_id=oc.owner_id";
 
 	$result = mysqli_query($dbconn, $query);
 
@@ -424,57 +359,100 @@ function get_team_form($owner_id, $season) {
 		exit;
 	}
 
-	$row = mysqli_fetch_assoc($result);
+	$owner = mysqli_fetch_assoc($result);
 
-	$_SESSION["bank"] = $row["Bank"];
+	$_SESSION["bank"] = $owner["bank"];
 
-	$_SESSION["owner_fnf"] = $row["FNF"];
+	$_SESSION["owner_fnf"] = $owner["FNF"];
 
-	if ($row["Bench01_ID"] > 0 && $row["Bench02_ID"] > 0) {
-		return "<p>this owner has no trades left.</p>";
+	/**************************************************************/
+
+	$fields = ["font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
+
+	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_drop.html');
+
+	// get active players
+
+	$query = "SELECT o.acquired, o.player_id, o.points, pc.pos, pc.salary, pc.team, pc.value, p.FNF";
+	$query .= " FROM owner_roster_current AS o, players_current AS pc, roster_order AS ro";
+	$query .= ", Players AS p";
+	$query .= " WHERE owner_id=" . $owner_id;
+	$query .= " AND o.benched=0";
+	$query .= " AND o.player_id=pc.player_id";
+	$query .= " AND o.player_id=p.Player_ID";
+	$query .= " AND pc.pos=ro.pos";
+	$query .= " ORDER BY ro.i ASC, pc.salary DESC";
+
+	$result = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
 	}
-	
-	if ($row["Bench01_ID"] > 0) {
-		$_SESSION["bench_col"] = "Bench02";
-	}
-	else {
-		$_SESSION["bench_col"] = "Bench01";
-	}
 
-	$team = "<p>" . $row["FNF"] . "</p>\n";
+	$active_players_html = "";
 
-	$team .= "<table class='table table-sm table-bordered'>\n";
+	while ($row = mysqli_fetch_assoc($result)) {
 
-	foreach ($GLOBALS["roster_active"] as $pos => $data) {
+		if ($row["acquired"] == 1) { $row["font_style"] = "italic"; }
+		else { $row["font_style"] = "normal"; }
 
-		$player_id = $row[$data["col_name"]];
+		$this_player_html = $player_row_template;
 
-		$query = "SELECT * FROM " . $GLOBALS["typt"] . " AS typt";
-		$query .= ", Players";
-		$query .= " WHERE Players.Player_ID=" . $player_id;
-		$query .= " AND Players.Player_ID=typt.Player_ID";
-
-		$result = mysqli_query($dbconn, $query);
-
-		if (mysqli_error($dbconn)) {
-			echo mysqli_error($dbconn);
-			exit;
+		foreach ($fields as $field) {
+			$this_player_html = str_replace('{{' . $field . '}}', $row[$field], $this_player_html);
 		}
 
-		$player = mysqli_fetch_assoc($result);
-
-		$team .= "<tr>";
-		$team .= "<td>" . $pos . "</td>";
-		$team .= "<td>" . $player["FNF"] . "</td>";
-		$team .= "<td>" . $player["Team"] . "</td>";
-		$team .= "<td align='right'>$" . $player["Salary"] . "</td>";
-
-		$team .= "<td align='center'><input type='radio' name='drop_player_id' value='" . $player["Player_ID"] . "'>";
-		$team .= "</td>";
-		$team .= "</tr>\n";
+		$active_players_html .= $this_player_html;
 	}
 
-	$team .= "</table>";
+	/**************************************************************/
 
-	return $team;
+	// get benched players
+
+	$benched_players_html = "";
+
+	$query = "SELECT o.player_id, o.points, pc.pos, pc.salary, pc.team, pc.value, p.FNF";
+	$query .= " FROM owner_roster_current AS o, players_current AS pc";
+	$query .= " , Players AS p";
+	$query .= " WHERE owner_id=" . $owner_id;
+	$query .= " AND o.benched=1";
+	$query .= " AND o.player_id=pc.player_id";
+	$query .= " AND o.player_id=p.Player_ID";
+
+	$result = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	if (mysqli_num_rows($result) != 0) {
+		while ($row = mysqli_fetch_assoc($result)) {
+
+			$this_player_html = $player_row_template;
+
+			foreach ($fields as $field) {
+				$this_player_html = str_replace('{{' . $field . '}}', $row[$field], $this_player_html);
+			}
+
+			$benched_players_html .= $this_player_html;
+		}
+	}
+
+	/**************************************************************/
+
+	$content = file_get_contents(HTML_PATH . "/team_drop.html");
+
+	$content = str_replace("{{active_players}}", $active_players_html, $content);
+	$content = str_replace("{{benched_players}}", $benched_players_html, $content);
+	$content = str_replace("{{FNF}}", $owner["FNF"], $content);
+	$content = str_replace("{{team_name}}", $owner["team_name"], $content);
+	$content = str_replace("{{bank}}", $owner["bank"], $content);
+	$content = str_replace("{{salary}}", $owner["salary"], $content);
+	$content = str_replace("{{points}}", $owner["points"], $content);
+
+	show_page($content);
+
+	exit;
 }
