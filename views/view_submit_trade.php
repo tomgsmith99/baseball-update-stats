@@ -31,10 +31,13 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 define("VIEWS", WEB_HOME . "/views");
 
+/**************************************************************/
+
 include INCLUDES_PATH . '/get_dbconn.php';
 include INCLUDES_PATH . '/get_all_owners_for_year.php';
 include INCLUDES_PATH . '/get_all_players_for_year.php';
 include INCLUDES_PATH . '/get_owner_drop_down_list.php';
+include INCLUDES_PATH . '/show_page.php';
 
 $dbconn = get_dbconn();
 
@@ -59,7 +62,11 @@ confirm_transaction();
 
 /**************************************************************/
 
+$title = "make a trade";
+
 function get_add_player_id() {
+
+	global $title;
 
 	if (array_key_exists("add_player_id", $_POST) && $_POST["add_player_id"]) {
 		$_SESSION["add_player_id"] = filter_var($_POST["add_player_id"], FILTER_SANITIZE_STRING);
@@ -79,7 +86,7 @@ function get_add_player_id() {
 			$content = str_replace($bullseye, $_SESSION[$field], $content);
 		}
 
-		show_page($content);
+		show_page($content, $title);
 	}
 }
 
@@ -89,13 +96,16 @@ function get_drop_player_id() {
 		$_SESSION["drop_player_id"] = filter_var($_POST["drop_player_id"], FILTER_SANITIZE_STRING);
 	}
 	if (!(array_key_exists("drop_player_id", $_SESSION) && $_SESSION["drop_player_id"])) {
-		get_team_form($_SESSION["owner_id"]);
+		$content = get_team_form($_SESSION["owner_id"]);
+
+		show_page($content, $title);
 	}
 }
 
 function get_owner_id() {
 
 	global $season;
+	global $title;
 
 	if (array_key_exists("owner_id", $_POST) && $_POST["owner_id"]) {
 		$_SESSION["owner_id"] = filter_var($_POST["owner_id"], FILTER_SANITIZE_STRING);
@@ -107,11 +117,13 @@ function get_owner_id() {
 
 		$content = str_replace("{{OWNER_LIST}}", $owner_drop_down_list, $content);
 
-		show_page($content);
+		show_page($content, $title);
 	}
 }
 
 function get_password() {
+
+	global $title;
 
 	if (array_key_exists("password", $_POST) && $_POST["password"]) {
 		$password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
@@ -126,26 +138,13 @@ function get_password() {
 
 		$content = file_get_contents(HTML_PATH . "/authenticate.html");
 
-		show_page($content);
+		show_page($content, $title);
 	}
 }
 
-function show_page($content) {
-
-	$page = file_get_contents(HTML_PATH . "/page.html");
-
-	$page = str_replace("{{TITLE}}", "Diffendorf baseball: Make a trade", $page);
-
-	$page = str_replace("{{CONTENT}}", $content, $page);
-
-	$page = str_replace("{{web_home}}", WEB_HOME, $page);
-
-	echo $page;
-
-	exit;
-}
-
 function confirm_transaction() {
+
+	global $title;
 
 	if (array_key_exists("confirmed", $_POST) && $_POST["confirmed"]) {
 		$_SESSION["confirmed"] = $_POST["confirmed"];
@@ -163,7 +162,7 @@ function confirm_transaction() {
 			$content = str_replace($bullseye, $_SESSION[$field], $content);
 		}
 
-		show_page($content);
+		show_page($content, $title);
 	}
 }
 
@@ -237,9 +236,7 @@ if (array_key_exists("confirmed", $_SESSION) && $_SESSION["confirmed"] == 1) {
 		$content = str_replace($bullseye, $_SESSION[$field], $content);
 	}
 
-	show_page($content);
-
-	exit;
+	show_page($content, $title);
 }
 
 function get_new_player() {
@@ -454,7 +451,5 @@ function get_team_form($owner_id) {
 	$content = str_replace("{{salary}}", $owner["salary"], $content);
 	$content = str_replace("{{points}}", $owner["points"], $content);
 
-	show_page($content);
-
-	exit;
+	return $content;
 }

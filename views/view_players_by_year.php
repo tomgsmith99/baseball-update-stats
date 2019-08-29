@@ -17,7 +17,10 @@ define("INCLUDES_PATH", BASE_PATH . "/includes");
 define("HTML_PATH", BASE_PATH . "/html");
 define("VIEWS", WEB_HOME . "/views");
 
+/***********************************/
+
 include INCLUDES_PATH . '/get_dbconn.php';
+include INCLUDES_PATH . '/show_page.php';
 
 /***********************************/
 
@@ -52,10 +55,6 @@ if ($row["status"] == "current") {
 else {
 	$player_table = "players_main";
 }
-
-/***********************************/
-
-// include CLASS_PATH . '/PlayerBySeason.php';
 
 /***********************************/
 // do we want to show all players, or just players who
@@ -150,14 +149,16 @@ $content = str_replace("{{SELF_HREF}}", $self_href, $content);
 
 /***********************************/
 
-$page = file_get_contents(HTML_PATH . "/page.html");
+show_page($content, "Players " . $season);
 
-$page = str_replace("{{TITLE}}", "Diffendorf Baseball: Players $season", $page);
+// $page = file_get_contents(HTML_PATH . "/page.html");
 
-$page = str_replace("{{CONTENT}}", $content, $page);
+// $page = str_replace("{{TITLE}}", "Diffendorf Baseball: Players $season", $page);
 
-$page = str_replace("{{web_home}}", WEB_HOME, $page);
+// $page = str_replace("{{CONTENT}}", $content, $page);
 
-echo $page;
+// $page = str_replace("{{web_home}}", WEB_HOME, $page);
 
-exit;
+// echo $page;
+
+// exit;
