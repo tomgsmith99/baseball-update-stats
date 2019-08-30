@@ -21,14 +21,10 @@ else {
 }
 
 $dir = "baseball_update_stats";
-
 define("WEB_HOME", "/" . $dir);
-
 define("BASE_PATH", $base_path . WEB_HOME);
 define("INCLUDES_PATH", BASE_PATH . "/includes");
-
 define("HTML_PATH", BASE_PATH . "/html");
-
 define("VIEWS", WEB_HOME . "/views");
 
 /**************************************************************/
@@ -324,7 +320,7 @@ function get_player_list() {
 
 	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_add.html');
 
-	$action = VIEWS . '/view_submit_trade.php';
+	// $action = '{{views}}/view_submit_trade.php';
 
 	while ($row = mysqli_fetch_assoc($result)) {
 		$player_row = $player_row_template;
@@ -333,7 +329,7 @@ function get_player_list() {
 		$player_row = str_replace('{{salary}}', $row['salary'], $player_row);
 		$player_row = str_replace('{{player_id}}', $row['player_id'], $player_row);
 		$player_row = str_replace('{{points}}', $row['points'], $player_row);
-		$player_row = str_replace('{{action}}', $action, $player_row);
+		// $player_row = str_replace('{{action}}', $action, $player_row);
 
 		$players .= $player_row;
 	}
@@ -363,7 +359,9 @@ function get_team_form($owner_id) {
 
 	/**************************************************************/
 
-	$fields = ["action", "font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
+	// $fields = ["action", "font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
+
+	$fields = ["font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
 
 	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_drop.html');
 
@@ -395,7 +393,7 @@ function get_team_form($owner_id) {
 
 		$this_player_html = $player_row_template;
 
-		$row["action"] = VIEWS . "/view_submit_trade.php";
+		// $row["action"] = "{{views}}/view_submit_trade.php";
 
 		foreach ($fields as $field) {
 			$this_player_html = str_replace('{{' . $field . '}}', $row[$field], $this_player_html);
@@ -427,7 +425,7 @@ function get_team_form($owner_id) {
 	if (mysqli_num_rows($result) != 0) {
 		while ($row = mysqli_fetch_assoc($result)) {
 
-			$row["action"] = VIEWS . "/view_submit_trade.php";
+			// $row["action"] = "{{views}}/view_submit_trade.php";
 
 			$this_player_html = $player_row_template;
 

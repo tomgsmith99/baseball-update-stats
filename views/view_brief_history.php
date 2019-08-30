@@ -12,6 +12,7 @@ define("WEB_HOME", "/" . $dir);
 define("BASE_PATH", $base_path . WEB_HOME);
 define("INCLUDES_PATH", BASE_PATH . "/includes");
 define("HTML_PATH", BASE_PATH . "/html");
+define("VIEWS", WEB_HOME . "/views");
 
 /**************************************************************/
 

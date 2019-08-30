@@ -16,28 +16,10 @@ define("VIEWS", WEB_HOME . "/views");
 
 /**************************************************************/
 
-include INCLUDES_PATH . '/generate_home_page.php';
+include INCLUDES_PATH . "/show_page.php";
 
 /**************************************************************/
 
-if (array_key_exists("mode", $_GET)) {
-	$mode = $_GET["mode"]; // dyn or static
+$content = file_get_contents(HTML_PATH . "/historical_stats.html");
 
-	if ($mode != "dyn") {
-		$mode = "static";
-	}
-}
-else {
-	$mode = "static";
-}
-
-/**************************************************************/
-
-if ($mode === "static") {
-	$home_page = file_get_contents(HTML_PATH . "/home_page/latest.html");
-}
-else {
-	$home_page = get_home_page();
-}
-
-echo $home_page;
+show_page($content, "historical stats");

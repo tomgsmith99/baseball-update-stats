@@ -10,6 +10,8 @@ function show_page($content, $title) {
 
 	$page = str_replace("{{web_home}}", WEB_HOME, $page);
 
+	$page = str_replace("{{views}}", VIEWS, $page);
+
 	echo $page;
 
 	exit;

@@ -8,12 +8,9 @@ else {
 }
 
 $dir = "baseball_update_stats";
-
 define("WEB_HOME", "/" . $dir);
-
 define("BASE_PATH", $base_path . WEB_HOME);
 define("INCLUDES_PATH", BASE_PATH . "/includes");
-
 define("HTML_PATH", BASE_PATH . "/html");
 define("VIEWS", WEB_HOME . "/views");
 
@@ -122,7 +119,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 /***********************************/
 
-$this_url = VIEWS . "/view_players_by_year.php?season=" . $season;
+$this_url = "{{views}}/view_players_by_year.php?season=" . $season;
 
 $this_url .= "&show=";
 

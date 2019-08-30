@@ -43,11 +43,11 @@ while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		if ($grid == "") { $grid = "\n<tr>"; }
 		else { $grid .= "</tr>\n<tr>"; }
 
-		$grid .= "<td><a href = '" . VIEWS . "/viewFinalStandings.php?season=" . $row["Year"] . "'>";
+		$grid .= "<td><a href = '{{views}}/viewFinalStandings.php?season=" . $row["Year"] . "'>";
 		$grid .= $row["Year"] . "</td>";
 	}
 
-	$grid .= "<td><a href = '" . VIEWS . "/owner.php?owner_id=" . $row["Owner_ID"] . "'>";
+	$grid .= "<td><a href = '{{views}}/owner.php?owner_id=" . $row["Owner_ID"] . "'>";
 	$grid .= $row["FNF"] . "</a></td>";
 }
 
