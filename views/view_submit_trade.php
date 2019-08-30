@@ -320,8 +320,6 @@ function get_player_list() {
 
 	$player_row_template = file_get_contents(HTML_PATH . '/player_row_short_with_add.html');
 
-	// $action = '{{views}}/view_submit_trade.php';
-
 	while ($row = mysqli_fetch_assoc($result)) {
 		$player_row = $player_row_template;
 		$player_row = str_replace('{{FNF}}', $row['FNF'], $player_row);
@@ -329,7 +327,6 @@ function get_player_list() {
 		$player_row = str_replace('{{salary}}', $row['salary'], $player_row);
 		$player_row = str_replace('{{player_id}}', $row['player_id'], $player_row);
 		$player_row = str_replace('{{points}}', $row['points'], $player_row);
-		// $player_row = str_replace('{{action}}', $action, $player_row);
 
 		$players .= $player_row;
 	}
@@ -358,8 +355,6 @@ function get_team_form($owner_id) {
 	$_SESSION["owner_fnf"] = $owner["FNF"];
 
 	/**************************************************************/
-
-	// $fields = ["action", "font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
 
 	$fields = ["font_style", "pos", "FNF", "team", "salary", "points", "value", "player_id"];
 
@@ -393,8 +388,6 @@ function get_team_form($owner_id) {
 
 		$this_player_html = $player_row_template;
 
-		// $row["action"] = "{{views}}/view_submit_trade.php";
-
 		foreach ($fields as $field) {
 			$this_player_html = str_replace('{{' . $field . '}}', $row[$field], $this_player_html);
 		}
@@ -424,8 +417,6 @@ function get_team_form($owner_id) {
 
 	if (mysqli_num_rows($result) != 0) {
 		while ($row = mysqli_fetch_assoc($result)) {
-
-			// $row["action"] = "{{views}}/view_submit_trade.php";
 
 			$this_player_html = $player_row_template;
 

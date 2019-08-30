@@ -1,25 +1,5 @@
 <?php
 
-// if (file_exists('/Applications/MAMP/htdocs')) {
-// 	$base_path = '/Applications/MAMP/htdocs';
-// }
-// else {
-// 	$base_path = '/var/www/html';
-// }
-
-// $dir = "baseball_update_stats";
-
-// define("WEB_HOME", "/" . $dir);
-
-// define("BASE_PATH", $base_path . WEB_HOME);
-// define("INCLUDES_PATH", BASE_PATH . "/includes");
-
-// set_include_path(INCLUDES_PATH);
-
-// define("HTML_PATH", BASE_PATH . "/html");
-
-define("VIEWS", WEB_HOME . "/views");
-
 include_once INCLUDES_PATH . '/get_dbconn.php';
 include INCLUDES_PATH . '/get_all_owners_for_year.php';
 include INCLUDES_PATH . '/get_all_players_for_year.php';
@@ -161,12 +141,6 @@ foreach ($c as $key => $value) {
 
 function get_home_page() {
 	global $page;
-
-	// $file_name = time() . ".html";
-
-	// file_put_contents(HTML_PATH . "/home_page/latest.html", $page);
-
-	// file_put_contents(HTML_PATH . "/home_page/" . $file_name, $page);
 
 	write_home_page();
 
