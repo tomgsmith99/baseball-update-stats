@@ -8,26 +8,33 @@ function get_all_teams_html($owners, $players, $season) {
 
 	$all_teams_html = "";
 
-	$team_template = file_get_contents(HTML_PATH . "/team.html");
+	$owner_cols = ["bank", "FNF", "owner_id", "team_name", "points", "season", "salary"];
 
-	$player_row_template = file_get_contents(HTML_PATH . "/player_row_short.html");
-
-	$i = 1;
-
-	$owner_cols = ["bank", "FNF", "owner_id", "team_name", "points", "season", "salary", "recent", "yesterday"];
-
-	$player_cols = ["pos", "FNF", "team", "salary", "value", "picked", "points", "yesterday", "recent"];
-
-	$all_teams = "";
+	$player_cols = ["pos", "FNF", "team", "salary", "value", "picked", "points"];
 
 	if ($season === $GLOBALS["this_year"]) {
 		$owner_table = "owner_roster_current";
 		$player_table = "players_current";
+		$team_template = file_get_contents(HTML_PATH . "/team.html");
+		$player_row_template = file_get_contents(HTML_PATH . "/player_row_short.html");
+
+		$owner_cols = array_merge($owner_cols, ["recent", "yesterday"]);
+
+		$player_cols = array_merge($player_cols, ["recent", "yesterday"]);
+
+		$get_team_sql = file_get_contents(BASE_PATH . "/queries/get_team.sql");
 	}
 	else {
-		$owner_table = "owner_roster_all_time";
+		$owner_table = "owner_rosters_all_time";
 		$player_table = "players_all_time";
+		$team_template = file_get_contents(HTML_PATH . "/team_past.html");
+		$player_row_template = file_get_contents(HTML_PATH . "/player_row_short_past.html");
+
+
+		$get_team_sql = file_get_contents(BASE_PATH . "/queries/get_team_past.sql");
 	}
+
+	$i = 1;
 
 	foreach ($owners as $owner => $row) {
 
@@ -36,10 +43,15 @@ function get_all_teams_html($owners, $players, $season) {
 		$this_team = str_replace("{{place}}", $place, $team_template);
 
 		foreach ($owner_cols as $col) {
+			if ($col == "team_name") {
+				if ($row[$col]) {
+					$row[$col] = " - " . $row[$col];
+				}
+			}
 			$this_team = str_replace("{{" . $col . "}}", $row[$col], $this_team);
 		}
 
-		$query = file_get_contents(BASE_PATH . "/queries/get_team.sql");
+		$query = $get_team_sql;
 		$query = str_replace("{{owner_table}}", $owner_table, $query);
 		$query = str_replace("{{player_table}}", $player_table, $query);
 		$query = str_replace("{{season}}", $season, $query);
@@ -101,18 +113,18 @@ function get_all_teams_html($owners, $players, $season) {
 
 		$active_players = "";
 
-		for ($i=0; $i < sizeof($active_players_arr); $i++) {
-			$active_players .= "\n" . $active_players_arr[$i];
+		for ($j=0; $j < sizeof($active_players_arr); $j++) {
+			$active_players .= "\n" . $active_players_arr[$j];
 		}
 
 		$this_team = str_replace("{{active_players}}", $active_players, $this_team);
 		$this_team = str_replace("{{benched_players}}", $benched_players, $this_team);
 		$this_team = str_replace("{{show_bench}}", $bench_display_style, $this_team);
 
-		$all_teams .= $this_team . "\n";
+		$all_teams_html .= $this_team . "\n";
 
 		$i++;
 	}
 
-	return $all_teams;
+	return $all_teams_html;
 }

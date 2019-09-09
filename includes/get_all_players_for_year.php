@@ -11,7 +11,8 @@ function get_all_players_for_year($current_or_past='current', $season=0) {
 		$table = "players_current";
 	}
 	else {
-		$table = "PlayersMain";
+		// $table = "PlayersMain";
+		$table = "players_all_time";
 	}
 
 	$query = "SELECT acquired, drafted, picked, t1.player_id, points, pos";
@@ -21,7 +22,7 @@ function get_all_players_for_year($current_or_past='current', $season=0) {
 	$query .= " WHERE t1.player_id = t2.Player_ID";
 
 	if ($current_or_past === "past") {
-		$query .= " AND t2.Season=" . $season;
+		$query .= " AND t1.season=" . $season;
 	}
 
 	// echo "\n" . $query . "\n";
@@ -39,22 +40,6 @@ function get_all_players_for_year($current_or_past='current', $season=0) {
 
 		$players[$player_id] = $row;
 	}
-
-	// 	$query = "SELECT * FROM playerXowner WHERE player_id=" . $player_id;
-	// 	$query .= " AND season=" . $season;
-	// 	$query .= " AND status='drafted'";
-
-	// 	$r = mysqli_query($dbconn, $query);
-
-	// 	if (mysqli_error($dbconn)) {
-	// 		echo mysqli_error($dbconn);
-	// 		exit;
-	// 	}
-
-	// 	$picked = mysqli_num_rows($r);
-
-	// 	$players[$player_id]["picked"] = $picked;
-	// }
 
 	return $players;
 }

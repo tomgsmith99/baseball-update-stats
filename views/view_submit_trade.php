@@ -175,7 +175,7 @@ if (array_key_exists("confirmed", $_SESSION) && $_SESSION["confirmed"] == 1) {
 
 	$year = date("Y");
 
-	$id = $year . "-" . $_SESSION['owner_id'] . "-" . $_SESSION['add_player_id'];
+	$id = $year . "_" . $_SESSION['owner_id'] . "_" . $_SESSION['add_player_id'];
 
 	// get current points for added player
 	$query = "SELECT points from players_current WHERE player_id=" . $_SESSION["add_player_id"];

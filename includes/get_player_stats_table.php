@@ -21,11 +21,12 @@ function get_player_stats_table($season, $category, $picked_only=true, $limit = 
 	if ($picked_only) {
 		$query .= " AND p.picked > 0";
 	}
+	else {
+		$query .= " AND p.picked = 0";
+	}
 
 	$query .= " ORDER BY " . $category;
 	$query .= " DESC, P.Lname ASC LIMIT " . $limit;
-
-	error_log($query);
 
 	$result = mysqli_query($dbconn, $query);
 

@@ -50,7 +50,7 @@ if ($row["status"] == "current") {
 	$player_table = "players_current";
 }
 else {
-	$player_table = "players_main";
+	$player_table = "players_all_time";
 }
 
 /***********************************/
