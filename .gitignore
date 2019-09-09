@@ -1,5 +1,4 @@
 .DS_Store
 .env.json
-js_libs/
 *log.txt*
 index.html
