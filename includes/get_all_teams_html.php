@@ -56,10 +56,6 @@ function get_all_teams_html($owners, $players, $season) {
 		$query = str_replace("{{season}}", $season, $query);
 		$query = str_replace("{{owner_id}}", $owner, $query);
 
-		// echo "<br>" . $query;
-
-		// exit;
-
 		$result = mysqli_query($dbconn, $query);
 
 		if (mysqli_error($dbconn)) {
