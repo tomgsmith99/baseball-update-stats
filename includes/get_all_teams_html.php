@@ -30,7 +30,6 @@ function get_all_teams_html($owners, $players, $season) {
 		$team_template = file_get_contents(HTML_PATH . "/team_past.html");
 		$player_row_template = file_get_contents(HTML_PATH . "/player_row_short_past.html");
 
-
 		$get_team_sql = file_get_contents(BASE_PATH . "/queries/get_team_past.sql");
 	}
 
@@ -56,6 +55,10 @@ function get_all_teams_html($owners, $players, $season) {
 		$query = str_replace("{{player_table}}", $player_table, $query);
 		$query = str_replace("{{season}}", $season, $query);
 		$query = str_replace("{{owner_id}}", $owner, $query);
+
+		// echo "<br>" . $query;
+
+		// exit;
 
 		$result = mysqli_query($dbconn, $query);
 
