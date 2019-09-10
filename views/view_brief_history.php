@@ -8,7 +8,7 @@ if (file_exists('/Applications/MAMP/htdocs')) {
 }
 else {
 	$base_path = '/var/www/html';
-	$web_home = '/';
+	$web_home = '';
 }
 
 // web paths
