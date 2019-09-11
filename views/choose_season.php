@@ -22,7 +22,7 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 /**************************************************************/
 
-include INCLUDES_PATH . "/show_page.php";
+include INCLUDES_PATH . "/get_page.php";
 include INCLUDES_PATH . '/get_dbconn.php';
 
 /**************************************************************/
@@ -72,4 +72,8 @@ $content = str_replace("{{ROWS}}", $rows, $content);
 
 $title = "choose a season";
 
-show_page($content, $title);
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;

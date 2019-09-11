@@ -31,7 +31,7 @@ else {
 
 /**************************************************************/
 
-include INCLUDES_PATH . "/show_page.php";
+include INCLUDES_PATH . "/get_page.php";
 
 /**************************************************************/
 
@@ -39,4 +39,8 @@ $content = file_get_contents(HTML_PATH . "/about/brief_history_" . $page_no . ".
 
 $title = "A Brief History of the League";
 
-show_page($content, $title);
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;

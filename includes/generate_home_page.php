@@ -7,8 +7,8 @@ include INCLUDES_PATH . '/get_all_teams_html.php';
 include INCLUDES_PATH . '/get_owner_drop_down_list.php';
 include INCLUDES_PATH . '/get_owner_rows_html.php';
 include INCLUDES_PATH . '/get_owner_stats_table.php';
+include INCLUDES_PATH . '/get_page.php';
 include INCLUDES_PATH . '/get_player_stats_table.php';
-// include INCLUDES_PATH . '/get_picked_player_table.php';
 
 include INCLUDES_PATH . '/ordinalSuffix.php';
 
@@ -129,15 +129,11 @@ foreach ($c as $key => $value) {
 
 // /************************************************************/
 
-$page = file_get_contents(HTML_PATH . "/page.html");
+$title = $season;
 
-$page = str_replace("{{TITLE}}", "Diffendorf baseball " . $season, $page);
+$page = get_page($content, $title);
 
-$page = str_replace("{{CONTENT}}", $content, $page);
-
-foreach ($c as $key => $value) {
-	$page = str_replace("{{" . $key . "}}", $value, $page);
-}
+// /************************************************************/
 
 function get_home_page() {
 	global $page;

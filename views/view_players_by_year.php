@@ -23,7 +23,7 @@ define("HTML_PATH", BASE_PATH . "/html");
 /***********************************/
 
 include INCLUDES_PATH . '/get_dbconn.php';
-include INCLUDES_PATH . '/show_page.php';
+include INCLUDES_PATH . '/get_page.php';
 
 /***********************************/
 
@@ -152,4 +152,8 @@ $content = str_replace("{{SELF_HREF}}", $self_href, $content);
 
 /***********************************/
 
-show_page($content, "Players " . $season);
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;

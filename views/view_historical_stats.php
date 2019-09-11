@@ -22,10 +22,14 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 /**************************************************************/
 
-include INCLUDES_PATH . "/show_page.php";
+include INCLUDES_PATH . "/get_page.php";
 
 /**************************************************************/
 
 $content = file_get_contents(HTML_PATH . "/historical_stats.html");
 
-show_page($content, "historical stats");
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;

@@ -23,7 +23,7 @@ define("HTML_PATH", BASE_PATH . "/html");
 /***********************************/
 
 include INCLUDES_PATH . '/get_dbconn.php';
-include INCLUDES_PATH . '/show_page.php';
+include INCLUDES_PATH . '/get_page.php';
 
 /***********************************/
 
@@ -82,4 +82,8 @@ while ($row = mysqli_fetch_array($result)) {
 $content = file_get_contents(HTML_PATH . "/owner_grid.html");
 $content = str_replace("{{OWNERS}}", $owners, $content);
 
-show_page($content, "owner grid");
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;

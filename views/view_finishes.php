@@ -22,7 +22,7 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 /**************************************************************/
 
-include INCLUDES_PATH . "/show_page.php";
+include INCLUDES_PATH . "/get_page.php";
 include INCLUDES_PATH . '/get_dbconn.php';
 
 /**************************************************************/
@@ -54,8 +54,10 @@ while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$grid .= $row["Year"] . "</td>";
 	}
 
-	$grid .= "<td><a href = '{{views}}/owner.php?owner_id=" . $row["Owner_ID"] . "'>";
-	$grid .= $row["FNF"] . "</a></td>";
+	// $grid .= "<td><a href = '{{views}}/owner.php?owner_id=" . $row["Owner_ID"] . "'>";
+	// $grid .= $row["FNF"] . "</a></td>";
+
+	$grid .= "<td>" . $row["FNF"] . "</a></td>";
 }
 
 $grid .= "</tr>";
@@ -70,4 +72,8 @@ $content = str_replace("{{ROWS}}", $grid, $content);
 
 $title = "all-time finishes";
 
-show_page($content, $title);
+$page = get_page($content, $title);
+
+echo $page;
+
+exit;
