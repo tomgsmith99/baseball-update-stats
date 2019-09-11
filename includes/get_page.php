@@ -58,7 +58,7 @@ function get_seasons() {
 	}
 
 
-	$seasons .= "\n<a class='dropdown-item' href='{{views}}/view_finishes.php";
+	$seasons .= "\n<a class='dropdown-item' href='{{views}}/choose_season.php";
 	$seasons .= "'>" . $oldest_season . " - " . $next_season . "</a>";
 
 	return $seasons;
