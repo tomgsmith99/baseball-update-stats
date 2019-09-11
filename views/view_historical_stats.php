@@ -22,13 +22,18 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 /**************************************************************/
 
+include INCLUDES_PATH . '/get_dbconn.php';
 include INCLUDES_PATH . "/get_page.php";
+
+/**************************************************************/
+
+$dbconn = get_dbconn();
 
 /**************************************************************/
 
 $content = file_get_contents(HTML_PATH . "/historical_stats.html");
 
-$page = get_page($content, $title);
+$page = get_page($content, "historical stats");
 
 echo $page;
 
