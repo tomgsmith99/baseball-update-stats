@@ -22,11 +22,11 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 /**************************************************************/
 
-if (!(array_key_exists("page_no", $_GET) || $_GET["page_no"])) {
-	$page_no = 1;
+if (array_key_exists("page_no", $_GET)) {
+	$page_no = intval($_GET["page_no"]);
 }
 else {
-	$page_no = intval($_GET["page_no"]);
+	$page_no = 1;
 }
 
 /**************************************************************/
