@@ -82,7 +82,7 @@ while ($row = mysqli_fetch_array($result)) {
 $content = file_get_contents(HTML_PATH . "/owner_grid.html");
 $content = str_replace("{{OWNERS}}", $owners, $content);
 
-$page = get_page($content, $title);
+$page = get_page($content, "owner grid");
 
 echo $page;
 
