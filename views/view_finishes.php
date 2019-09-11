@@ -31,10 +31,11 @@ $dbconn = get_dbconn();
 
 /**************************************************************/
 
-$query = "SELECT t1.Owner_ID, t1.Points, t1.Place, t1.Year, t2.FNF";
-$query .= " FROM OwnersMain as t1, Members as t2";
-$query .= " WHERE t1.Owner_ID = t2.Member_ID AND Place < 7";
-$query .= " ORDER BY Year DESC, Place, t2.Lname, t2.Fname ASC";
+$query = "SELECT o.Owner_ID, o.Points, o.Place, o.Year, m.FNF, s.status";
+$query .= " FROM OwnersMain AS o, Members AS m, Seasons AS s";
+$query .= " WHERE o.Owner_ID = m.Member_ID AND o.Place < 7";
+$query .= " AND o.Year=s.Season_ID AND s.status='closed'";
+$query .= " ORDER BY o.Year DESC, Place, m.Lname, m.Fname ASC";
 
 $result = mysqli_query($dbconn, $query);
 
