@@ -163,23 +163,6 @@ function update_player($row) {
 		}
 	}
 
-	// $query = "UPDATE players_current SET points=" . $total_points;
-	// $query .= ", yesterday=" . $yday_points;
-	// $query .= ", recent=" . $recent_points;
-	// $query .= ", updated=" . $today;
-	// $query .= ", value=" . $value;
-	// $query .= " WHERE player_id=" . $player_id;
-	// $query .= " AND Season=" . $this_year;
-
-	// echo "\n" . $query;
-
-	// mysqli_query($dbconn, $query);
-
-	// if (mysqli_error($dbconn)) {
-	// 	echo mysqli_error($dbconn);
-	// 	exit;
-	// }
-
 	$id = $player_id . "_" . $this_year . "_" . $today;
 
 	$query = "REPLACE players_points_current SET";

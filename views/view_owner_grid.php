@@ -1,18 +1,24 @@
 <?php
 
+$dir = "baseball_update_stats";
+
 if (file_exists('/Applications/MAMP/htdocs')) {
 	$base_path = '/Applications/MAMP/htdocs';
+	$web_home = '/' . $dir;
 }
 else {
 	$base_path = '/var/www/html';
+	$web_home = '';
 }
 
-$dir = "baseball_update_stats";
-define("WEB_HOME", "/" . $dir);
-define("BASE_PATH", $base_path . WEB_HOME);
+// web paths
+define("WEB_HOME", $web_home);
+define("VIEWS", WEB_HOME . "/views");
+
+// filesystem paths
+define("BASE_PATH", $base_path . '/' . $dir);
 define("INCLUDES_PATH", BASE_PATH . "/includes");
 define("HTML_PATH", BASE_PATH . "/html");
-define("VIEWS", WEB_HOME . "/views");
 
 /***********************************/
 
