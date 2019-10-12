@@ -26,9 +26,9 @@ $dbconn = get_dbconn();
 
 /*********************************************************************/
 
-$season = 2004;
-$first_day = 100;
-$last_day = 277;
+$season = 2019;
+$first_day = 88;
+$last_day = 269;
 
 $query = "SELECT * FROM Players" . $season . " AS p,";
 $query .= " Players AS P";

@@ -7,6 +7,9 @@ if (file_exists('/Applications/MAMP/htdocs')) {
 	$web_home = '/' . $dir;
 }
 else {
+
+	header('Location: http://baseball.tomgsmith.com/views/view_final_standings.php?season=2019');
+
 	$base_path = '/var/www/html';
 	$web_home = '';
 }
