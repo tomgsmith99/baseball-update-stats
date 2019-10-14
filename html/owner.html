@@ -1,0 +1,71 @@
+
+	<h3 style="margin-top:10px">{{OWNER_NAME}}</h3>
+
+	<div class="row">
+
+		<div class="col-6">
+
+			<table class="table table-striped table-bordered table-sm">
+				<tbody>
+
+					<tr>
+						<td>Most recent appearance</td>
+						<td>{{MOST_RECENT_APP}}</td>
+					</tr>
+
+					<tr>
+						<td>Rookie year</td>
+						<td>{{ROOKIE_YEAR}}</td>
+					</tr>
+
+					<tr>
+						<td>Appearances</td>
+						<td>{{APPEARANCES}}</td>
+						<td>{{APP_DESC}}</td>
+					</tr>
+
+					<tr>
+						<td>Championships</td>
+						<td>{{CHAMPIONSHIPS}}</td>
+						<td>{{CHAMP_DESC}}</td>
+					</tr>
+					<tr>
+						<td>Best finish</td>
+						<td>{{BEST_FINISH}}</td>
+						<td>{{BEST_FINISH_DESC}}</td>
+					</tr>
+
+					<tr>
+						<td>Top six (money) finishes</td>
+						<td>{{TOP_SIX}}</td>
+						<td>{{TOP_SIX_DESC}}</td>
+					</tr>
+
+					<tr>
+						<td>Avg. Finish</td>
+						<td>{{AVG_FINISH}}</td>
+						<td>{{AVG_FINISH_DESC}}</td>
+					</tr>
+
+					<tr>
+						<td>Rating</td>
+						<td>{{RATING}}</td>
+						<td>{{RATING_DESC}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="col-6">
+			<img src="{{IMG_URL}}"/>
+
+			<div class="dropdown">
+				<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seasons</button>
+				<div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+					{{SEASON_LINKS}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{{TEAMS}}

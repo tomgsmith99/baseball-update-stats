@@ -68,7 +68,6 @@ if ($season > 2004) {
 	// Get owner drop-down list
 	$c["owner_drop_down_list"] = get_owner_drop_down_list($season);
 
-
 	/************************************************************/
 	// get html tables for all teams
 	$c["all_teams"] = get_all_teams_html($owners, $players, $season);
