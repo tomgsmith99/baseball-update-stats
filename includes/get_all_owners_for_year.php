@@ -26,6 +26,8 @@ function get_all_owners_for_year($season, $order_by) {
 	$query .= " AND o.owner_id = O.owner_id";
 	$query .= " ORDER BY " . $order_by;
 
+	echo $query;
+
 	$result = mysqli_query($dbconn, $query);
 
 	if (mysqli_error($dbconn)) {
