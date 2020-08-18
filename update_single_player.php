@@ -24,8 +24,6 @@ define("HTML_PATH", BASE_PATH . "/html");
 
 define("QUERIES_PATH", BASE_PATH . "/queries");
 
-// set_include_path(INCLUDES_PATH);
-
 include INCLUDES_PATH . "/get_dbconn.php";
 
 $dbconn = get_dbconn();

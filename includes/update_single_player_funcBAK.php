@@ -4,16 +4,19 @@ date_default_timezone_set("America/New_York");
 
 /*************************************************************/
 
-$pitcher_flag = '<th title="Blown Saves" class="Table__TH">BLSV</th>';
+$key_string = "<td>" . $this_year . " Regular Season</td>";
 
-$base_url = "https://www.espn.com/mlb/player/stats/_/id/";
+$key_string_01 = '<td class="Table__TD">Regular Season</td></tr>';
 
-global $this_year;
+$key_string_02 = '<h3 class="Card__Header__Title Card__Header__Title--no-theme">Recent Games</h3>';
 
-$this_year_flag = '<td class="Table__TD">' . $this_year . "</td>";
+$key_string_03 = '<tr class="Table__TR Table__TR--sm Table__even" data-idx="0">';
+
+$key_string_04 = '<th title="At Bats" class="Table__TH">AB</th>';
+
+$key_string_05 = '<td class="Table__TD">';
 
 function update_player($row) {
-	global $base_url;
 	global $dbconn;
 	global $this_year;
 	global $today;
@@ -37,10 +40,7 @@ function update_player($row) {
 	// get the player stats page. function includes error checking
 	// for 1) url exists in Player table; 2) url can be opened; 
 	// 3) url contains stats for this year
-
-	$url = $base_url . $row["ESPN_Stats_ID"];
-
-	$stats_page = get_stats_page($player_id, $url);
+	$stats_page = get_stats_page($player_id, $row["URL"]);
 
 	if ($stats_page == "") {
 
@@ -154,7 +154,7 @@ function update_player($row) {
 
 		$value = intval($total_points / $row["salary"] / $days * 10000);
 
-		update_player_status("found stats", $player_id);
+		// update_player_status("found stats", $player_id);
 
 		$query = "UPDATE players_current SET points=" . $total_points;
 		$query .= ", yesterday=" . $yday_points;
@@ -221,10 +221,12 @@ function get_ptype($page) {
 }
 
 function get_stats_page($player_id, $url) {
-
-	global $pitcher_flag;
-
-	global $this_year_flag;
+	global $key_string;
+	global $key_string_01;
+	global $key_string_02;
+	global $key_string_03;
+	global $key_string_04;
+	global $key_string_05;
 
 	global $player_type;
 
@@ -253,29 +255,11 @@ function get_stats_page($player_id, $url) {
 	}
 	echo "opened the page.\n";
 
-	// has the player made an appearance yet this year?
-	if (strpos($page, $this_year_flag) === FALSE) {
-
-		$err_msg = "player has not played yet this year";
-
-		echo $err_msg . "\n";
-
-		update_player_status($err_msg, $player_id);
-
-		echo $err_msg;
-
-		return "";
-	}
-
-	if (strpos($page, $pitcher_flag) === FALSE) {
-		$player_type = "batter";
-
-		$key_string_01 = '<th title="Wins Above Replacement" class="Table__TH">WAR</th></tr></thead>';
+	if (strpos($page, $key_string_04) === FALSE) {
+		$player_type = "pitcher";
 	}
 	else {
-		$player_type = "pitcher";
-
-		$key_string_01 = '<th title="Blown Saves" class="Table__TH">BLSV</th></tr></thead>';
+		$player_type = "batter";
 	}
 
 	echo "the player type is: " . $player_type;
@@ -287,72 +271,129 @@ function get_stats_page($player_id, $url) {
 
 		echo $err_msg . "\n";
 
-		update_player_status($err_msg, $player_id);
+		// update_player_status($err_msg, $player_id);
 
 		return "";
 	}
 	else {
 		$arr = explode($key_string_01, $page);
 
-		$arr = explode("</tbody>", $arr[1]);
+		$arr = explode($key_string_02, $arr[1]);
 
-		$stats_table = $arr[0];
+		// echo $arr[0];
 
-		$row_regex = '<tr class="Table__TR Table__TR--sm Table__even" data-idx="[0-9]*">';
+		$arr = explode($key_string_03, $arr[0]);
 
-		$arr = preg_split($row_regex, $stats_table);
+		$arr = explode($key_string_05, $arr[1]);
 
-		$arr_size = sizeof($arr);
+		return $arr;
 
-		$this_year_row = $arr[$arr_size - 3];
-
-		$arr = explode('<td class="Table__TD">', $this_year_row);
-
-		foreach ($arr as $cell) {
-			$stats[] = rtrim($cell, "</td>");
-		}
-
-		print_r($stats);
-
-		return $stats;
+		// print_r($arr);
+		// echo $arr[1];
 	}
+
+	// echo "found the key string.\n";
+
+	// return $page;
 }
 
-function get_total_points_from_page($ptype, $stats) {
+function get_total_points_from_page($ptype, $arr) {
 
 	global $dbconn;
+	global $key_string;
 
-	global $player_type;
+	// get the "real" ptype for a pitcher
+	if ($ptype === "SP" || $ptype === "RP") {
+		// echo "\ngetting the real ptype...";
+		// $ptype = get_ptype($page);
+	}
+
+	// print_r($arr);
+
+	$stats = [];
+
+	for ($i = 0; $i < 15; $i++) {
+
+		$a = explode("</td>", $arr[$i]);
+
+		$stats[$i] = $a[0];
+
+		echo $a[0] . "\n";
+	}
+
+	for ($i = 0; $i < 15; $i++) {
+
+		echo $stats[$i];
+	}
 
 	if ($player_type == "batter") {
+		$runs = 	$stats[3];
+		$hits = 	$stats[4];
+		$doubles = 	$stats[5];
+		$triples = 	$stats[6];
+		$hr = 		$stats[7];
+		$rbi = 		$stats[8];
+		$bb = 		$stats[9];
+		$sb = 		$stats[11];
+		$singles = $hits - $hr - $triples - $doubles;
 
-		$final_stats["runs"] = $stats[3];
-		$final_stats["hits"] = $stats[4];
-		$final_stats["doubles"] = $stats[5];
-		$final_stats["triples"] = $stats[6];
-		$final_stats["hr"] = $stats[7];
-		$final_stats["rbi"] = $stats[8];
-		$final_stats["bb"] = $stats[9];
-		$final_stats["sb"] = $stats[12];
-
-		$final_stats["singles"] = $final_stats["hits"] - $final_stats["hr"] - $final_stats["triples"] - $final_stats["doubles"];
-
-		$points = $final_stats["runs"] + $final_stats["singles"] + ($final_stats["doubles"] * 2) + ($final_stats["triples"] * 3) + ($final_stats["hr"] * 4) + $final_stats["rbi"] + ($final_stats["sb"] * 2);
-	}
-	else {
-
-		$final_stats["wins"] = $stats[3];
-		$final_stats["ip"] = $stats[9];
-		$final_stats["saves"] = $stats[16];
-		$final_stats["k"] = $stats[10];
-
-		$points = ($final_stats["wins"] * 10) + intval($final_stats["ip"]) + ($final_stats["saves"] * 10) + $final_stats["k"];
-
+		$points = $runs + $singles + ($doubles * 2) + ($triples * 3) + ($hr * 4) + $rbi + $bb + ($sb * 2);
 	}
 
-	print_r($final_stats);
+	exit();
 
-	echo "\ntotal points: " . $points;
+	$arr = explode($key_string, $page);
+
+	$arr = explode('</tr><tr class="evenrow"><td>Career</td>', $arr[1]);
+
+	$stats_html = $arr[0];
+
+	$arr = explode('<td class="textright">', $stats_html);
+
+	$stats = [];
+
+	$i = 0;
+
+	foreach ($arr as $field) {
+
+		$x = explode("</td>", $field);
+
+		$stats[$i] = $x[0];
+
+		$i++;
+	}
+
+	echo "\n" . json_encode($stats);
+
+	if ($ptype === "Batter") {
+		$runs = 	$stats[3];
+		$hits = 	$stats[4];
+		$doubles = 	$stats[5];
+		$triples = 	$stats[6];
+		$hr = 		$stats[7];
+		$rbi = 		$stats[8];
+		$bb = 		$stats[9];
+		$sb = 		$stats[11];
+		$singles = $hits - $hr - $triples - $doubles;
+
+		$points = $runs + $singles + ($doubles * 2) + ($triples * 3) + ($hr * 4) + $rbi + $bb + ($sb * 2);
+	}
+	else if ($ptype === "SP") {
+		$ip = 	(int)$stats[5];
+		$k = 	$stats[11];
+		$w = 	$stats[12];
+
+		$points = $ip + $k + ($w * 10);
+
+	}
+	else if ($ptype === "RP") {
+		$ip = 	(int)$stats[5];
+		$k = 	$stats[11];
+		$w = 	$stats[12];
+		$sv = 	$stats[14];
+
+		$points = $ip + $k + ($w * 10) + ($sv * 10);
+	}
 
 	return $points;
 }
@@ -374,3 +415,4 @@ function update_player_status($status, $player_id) {
 		exit;
 	}
 }
+

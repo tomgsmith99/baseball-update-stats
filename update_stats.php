@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/New_York');
+
 $dir = "baseball_update_stats";
 
 if (file_exists('/Applications/MAMP/htdocs')) {
@@ -10,6 +12,10 @@ else {
 	$base_path = '/var/www/html';
 	$web_home = '';
 }
+
+echo "\nthe base path is: " . $base_path;
+echo "\nthe web home is: " . $web_home;
+echo "\n";
 
 // web paths
 define("WEB_HOME", $web_home);
@@ -35,8 +41,8 @@ $today = date("z");
 include INCLUDES_PATH . "/get_batch_of_players.php";
 include INCLUDES_PATH . "/initialize_table.php";
 include INCLUDES_PATH . "/update_single_player_func.php";
-include INCLUDES_PATH . "/upload_logs_to_s3.php";
-include INCLUDES_PATH . "/generate_home_page.php";
+// include INCLUDES_PATH . "/upload_logs_to_s3.php";
+// include INCLUDES_PATH . "/generate_home_page.php";
 
 /*************************************************************/
 
@@ -104,11 +110,11 @@ if (players_are_done()) {
 
 	summarize();
 
-	write_home_page();
+	// write_home_page();
 
-	if (file_exists('/tmp/cron_debug_log.log')) {
-		upload_logs_to_s3();
-	}
+	// if (file_exists('/tmp/cron_debug_log.log')) {
+	// 	upload_logs_to_s3();
+	// }
 
 	exit;
 }

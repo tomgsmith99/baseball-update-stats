@@ -11,4 +11,7 @@ function initialize_table() {
 		echo mysqli_error($dbconn);
 		exit;
 	}
+	else {
+		echo "initialized players_current table...\n";
+	}
 }
