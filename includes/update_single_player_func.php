@@ -20,7 +20,16 @@ function update_player($row) {
 
 	$player_type = "";
 
-	$days = $today - 86;
+	// $days = $today - 86;
+
+	if ($this_year == 2020) {
+		$first_day = 205;
+	}
+	else {
+		$first_day = 86;
+	}
+
+	$days = $today - $first_day;
 
 	$recent_day = $today - 5;
 	$yesterday = $today - 1;
