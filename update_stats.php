@@ -244,6 +244,38 @@ function update_owners() {
 	}
 
 	/************************************************/
+	// update the owners_current table with place
+
+	$query = "SELECT owner_id FROM owners_current ORDER BY points DESC";
+
+	echo "\n" . $query . "\n";
+
+	$result = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	$place = 1;
+
+	while ($row = mysqli_fetch_assoc($result)) {
+		$query = "UPDATE owners_current SET place = " . $place;
+		$query .= " WHERE owner_id = " . $row["owner_id"];
+
+		echo "\n" . $query . "\n";
+
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
+
+		$place++;
+	}
+
+	/************************************************/
 	// update the owners_current table with
 	// yesterday points
 
