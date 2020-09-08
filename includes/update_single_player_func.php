@@ -202,7 +202,7 @@ function update_player($row) {
 		exit;
 	}
 
-	$query = "UPDATE owner_roster_current SET";
+	$query = "UPDATE ownersXrosters_current SET";
 	$query .= " points=(" . $total_points . " - prev_points)";
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND season=" . $this_year;

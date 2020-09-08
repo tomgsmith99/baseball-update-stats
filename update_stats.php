@@ -210,7 +210,7 @@ function update_owners() {
 	/************************************************/
 	// update the ownersXpoints table
 
-	$query = "SELECT owner_id, points FROM owners_current";
+	$query = "SELECT owner_id, points FROM ownersXseasons_current";
 	$query .= " WHERE season=" . $this_year;
 
 	echo "\n" . $query . "\n";
@@ -244,9 +244,9 @@ function update_owners() {
 	}
 
 	/************************************************/
-	// update the owners_current table with place
+	// update the ownersXseasons_current table with place
 
-	$query = "SELECT owner_id FROM owners_current ORDER BY points DESC";
+	$query = "SELECT owner_id FROM ownersXseasons_current ORDER BY points DESC";
 
 	echo "\n" . $query . "\n";
 
@@ -260,7 +260,7 @@ function update_owners() {
 	$place = 1;
 
 	while ($row = mysqli_fetch_assoc($result)) {
-		$query = "UPDATE owners_current SET place = " . $place;
+		$query = "UPDATE ownersXseasons_current SET place = " . $place;
 		$query .= " WHERE owner_id = " . $row["owner_id"];
 
 		echo "\n" . $query . "\n";
@@ -276,7 +276,7 @@ function update_owners() {
 	}
 
 	/************************************************/
-	// update the owners_current table with
+	// update the ownersXseasons_current table with
 	// yesterday points
 
 	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");
@@ -294,7 +294,7 @@ function update_owners() {
 	}
 
 	/************************************************/
-	// update the owners_current table with
+	// update the ownersXseasons_current table with
 	// recent points
 
 	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");

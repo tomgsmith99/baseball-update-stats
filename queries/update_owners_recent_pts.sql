@@ -1,4 +1,4 @@
-UPDATE owners_current oc
+UPDATE ownersXseasons_current oc
 INNER JOIN (
   SELECT owner_id, points
   FROM ownerXpoints
