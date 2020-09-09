@@ -1,7 +1,7 @@
 UPDATE ownersXseasons_current oc
 INNER JOIN (
   SELECT owner_id, points
-  FROM ownerXpoints
+  FROM ownersXpoints
   WHERE season={{season}}
   AND day={{day}}
 ) x ON oc.owner_id = x.owner_id

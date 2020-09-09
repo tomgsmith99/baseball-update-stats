@@ -227,7 +227,7 @@ function update_owners() {
 
 		$id = $this_year . "_" . $today . "_" . $owner_id;
 
-		$query = "REPLACE ownerXpoints SET id='" . $id . "'";
+		$query = "REPLACE ownersXpoints SET id='" . $id . "'";
 		$query .= ", points=" . $row["points"];
 		$query .= ", season=" . $this_year;
 		$query .= ", owner_id=" . $owner_id;
