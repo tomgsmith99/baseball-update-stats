@@ -35,7 +35,7 @@ function update_player($row) {
 	$yesterday = $today - 1;
 
 	$player_id = $row["player_id"];
-	$player_name = $row["FNF"];
+	$player_name = $row["fnf"];
 	$ptype = $row["p_type"];
 	$pos = $row["pos"];
 
@@ -47,7 +47,7 @@ function update_player($row) {
 	// for 1) url exists in Player table; 2) url can be opened; 
 	// 3) url contains stats for this year
 
-	$url = $base_url . $row["ESPN_Stats_ID"];
+	$url = $base_url . $row["espn_stats_id"];
 
 	$stats_page = get_stats_page($player_id, $url);
 
@@ -63,7 +63,7 @@ function update_player($row) {
 		$query .= ", recent=" . $recent_points;
 		$query .= ", value=" . $value;
 		$query .= " WHERE player_id=" . $player_id;
-		$query .= " AND Season=" . $this_year;
+		$query .= " AND season=" . $this_year;
 
 		echo "\n" . $query;
 
@@ -172,7 +172,7 @@ function update_player($row) {
 		$query .= ", updated=" . $today;
 		$query .= ", value=" . $value;
 		$query .= " WHERE player_id=" . $player_id;
-		$query .= " AND Season=" . $this_year;
+		$query .= " AND season=" . $this_year;
 
 		echo "\n" . $query;
 
@@ -187,8 +187,7 @@ function update_player($row) {
 	$id = $player_id . "_" . $this_year . "_" . $today;
 
 	$query = "REPLACE players_points_current SET";
-	$query .= " id='" . $id . "'";
-	$query .= ", player_id=" . $player_id;
+	$query .= " player_id=" . $player_id;
 	$query .= ", points=" . $total_points;
 	$query .= ", day=" . $today;
 	$query .= ", season=" . $this_year;

@@ -8,21 +8,21 @@ function get_batch_of_players($batch_size, $player_id=0) {
 
 	if ($player_id == 0) {
 		$query = "SELECT t1.player_id, t1.p_type, t1.salary, t1.pos";
-		$query .= ", t1.update_status, t2.URL, t2.ESPN_Stats_ID, t2.FNF";
+		$query .= ", t1.update_status, t2.url, t2.espn_stats_id, t2.fnf";
 		$query .= " FROM players_current AS t1";
-		$query .= ", Players as t2";
+		$query .= ", players as t2";
 		$query .= " WHERE t1.updated < " . $today;
 		$query .= " AND t1.checked < 2";
-		$query .= " AND t1.player_id = t2.Player_ID";
+		$query .= " AND t1.player_id = t2.player_id";
 		$query .= " ORDER BY t1.checked ASC";
 		$query .= " LIMIT " . $batch_size;
 	}
 	else {
 		$query = "SELECT t1.player_id, t1.p_type, t1.salary, t1.pos";
-		$query .= ", t1.update_status, t2.URL, t2.ESPN_Stats_ID, t2.FNF";
+		$query .= ", t1.update_status, t2.url, t2.espn_stats_id, t2.fnf";
 		$query .= " FROM players_current AS t1";
-		$query .= ", Players as t2";
-		$query .= " WHERE t1.player_id = t2.Player_ID";
+		$query .= ", players as t2";
+		$query .= " WHERE t1.player_id = t2.player_id";
 		$query .= " AND t1.player_id = " . $player_id;
 	}
 

@@ -2,16 +2,16 @@
 
 date_default_timezone_set('America/New_York');
 
-$dir = "baseball_update_stats";
+include ".env.php";
 
-if (file_exists('/Applications/MAMP/htdocs')) {
-	$base_path = '/Applications/MAMP/htdocs';
-	$web_home = '/' . $dir;
-}
-else {
-	$base_path = '/var/www/html';
-	$web_home = '';
-}
+// if (file_exists('/Users/tomsmith/projects/baseball_update_stats/update_stats.php')) {
+// 	$base_path = '/Users/tomsmith/projects';
+// 	$web_home = '/' . $dir;
+// }
+// else {
+// 	$base_path = '/var/www/html';
+// 	$web_home = '';
+// }
 
 echo "\nthe base path is: " . $base_path;
 echo "\nthe web home is: " . $web_home;
@@ -227,8 +227,8 @@ function update_owners() {
 
 		$id = $this_year . "_" . $today . "_" . $owner_id;
 
-		$query = "REPLACE ownersXpoints SET id='" . $id . "'";
-		$query .= ", points=" . $row["points"];
+		$query = "REPLACE ownersXpoints SET";
+		$query .= " points=" . $row["points"];
 		$query .= ", season=" . $this_year;
 		$query .= ", owner_id=" . $owner_id;
 		$query .= ", day=" . $today;
