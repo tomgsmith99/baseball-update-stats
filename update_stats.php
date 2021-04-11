@@ -5,19 +5,10 @@ date_default_timezone_set('America/New_York');
 $cwd = "";
 
 if (getcwd() == "/home/tomgsmith99") {
-	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/"
+	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/";
 }
 
 include $cwd . ".env.php";
-
-// if (file_exists('/Users/tomsmith/projects/baseball_update_stats/update_stats.php')) {
-// 	$base_path = '/Users/tomsmith/projects';
-// 	$web_home = '/' . $dir;
-// }
-// else {
-// 	$base_path = '/var/www/html';
-// 	$web_home = '';
-// }
 
 echo "\nthe base path is: " . $base_path;
 echo "\nthe web home is: " . $web_home;
