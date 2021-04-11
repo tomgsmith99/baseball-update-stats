@@ -1,15 +1,23 @@
 <?php
 
-$dir = "baseball_update_stats";
+$cwd = "";
 
-if (file_exists('/Applications/MAMP/htdocs')) {
-	$base_path = '/Applications/MAMP/htdocs';
-	$web_home = '/' . $dir;
+if (getcwd() == "/home/tomgsmith99") {
+	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/"
 }
-else {
-	$base_path = '/var/www/html';
-	$web_home = '';
-}
+
+include $cwd . ".env.php";
+
+// $dir = "baseball_update_stats";
+
+// if (file_exists('/Applications/MAMP/htdocs')) {
+// 	$base_path = '/Applications/MAMP/htdocs';
+// 	$web_home = '/' . $dir;
+// }
+// else {
+// 	$base_path = '/var/www/html';
+// 	$web_home = '';
+// }
 
 // web paths
 define("WEB_HOME", $web_home);
@@ -49,6 +57,7 @@ if (isset($argc)) {
 	}
 	else {
 		echo "you need to supply a player_id as a command line argument.\n";
+		echo "like this: php update_single_player.php 4244"
 		exit;
 	}
 }

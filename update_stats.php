@@ -2,7 +2,13 @@
 
 date_default_timezone_set('America/New_York');
 
-include ".env.php";
+$cwd = "";
+
+if (getcwd() == "/home/tomgsmith99") {
+	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/"
+}
+
+include $cwd . ".env.php";
 
 // if (file_exists('/Users/tomsmith/projects/baseball_update_stats/update_stats.php')) {
 // 	$base_path = '/Users/tomsmith/projects';
