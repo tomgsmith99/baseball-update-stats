@@ -345,7 +345,7 @@ function get_total_points_from_page($ptype, $stats) {
 
 		$final_stats["singles"] = $final_stats["hits"] - $final_stats["hr"] - $final_stats["triples"] - $final_stats["doubles"];
 
-		$points = $final_stats["runs"] + $final_stats["singles"] + ($final_stats["doubles"] * 2) + ($final_stats["triples"] * 3) + ($final_stats["hr"] * 4) + $final_stats["rbi"] + ($final_stats["sb"] * 2);
+		$points = $final_stats["runs"] + $final_stats["singles"] + ($final_stats["doubles"] * 2) + ($final_stats["triples"] * 3) + ($final_stats["hr"] * 4) + $final_stats["rbi"] + ($final_stats["sb"] * 2) + $final_stats["bb"];
 	}
 	else {
 

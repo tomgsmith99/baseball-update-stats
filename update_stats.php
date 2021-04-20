@@ -107,12 +107,6 @@ if (players_are_done()) {
 
 	summarize();
 
-	// write_home_page();
-
-	// if (file_exists('/tmp/cron_debug_log.log')) {
-	// 	upload_logs_to_s3();
-	// }
-
 	exit;
 }
 else {
