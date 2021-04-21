@@ -36,7 +36,6 @@ function update_player($row) {
 
 	$player_id = $row["player_id"];
 	$player_name = $row["fnf"];
-	$ptype = $row["p_type"];
 	$pos = $row["pos"];
 
 	echo "\n*************************************\n";

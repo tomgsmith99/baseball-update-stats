@@ -7,7 +7,7 @@ function get_batch_of_players($batch_size, $player_id=0) {
 	global $today;
 
 	if ($player_id == 0) {
-		$query = "SELECT t1.player_id, t1.p_type, t1.salary, t1.pos";
+		$query = "SELECT t1.player_id, t1.salary, t1.pos";
 		$query .= ", t1.update_status, t2.espn_stats_id, t2.fnf";
 		$query .= " FROM players_current AS t1";
 		$query .= ", players as t2";
@@ -18,7 +18,7 @@ function get_batch_of_players($batch_size, $player_id=0) {
 		$query .= " LIMIT " . $batch_size;
 	}
 	else {
-		$query = "SELECT t1.player_id, t1.p_type, t1.salary, t1.pos";
+		$query = "SELECT t1.player_id, t1.salary, t1.pos";
 		$query .= ", t1.update_status, t2.espn_stats_id, t2.fnf";
 		$query .= " FROM players_current AS t1";
 		$query .= ", players as t2";
