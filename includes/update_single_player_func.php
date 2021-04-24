@@ -183,7 +183,7 @@ function update_player($row) {
 		}
 	}
 
-	$id = $player_id . "_" . $this_year . "_" . $today;
+	// $id = $player_id . "_" . $this_year . "_" . $today;
 
 	$query = "REPLACE players_points_current SET";
 	$query .= " player_id=" . $player_id;
@@ -216,16 +216,16 @@ function update_player($row) {
 	}
 }
 
-function get_ptype($page) {
-	if (strpos($page, "BLSV") === FALSE) {
-		echo "\nthis is an SP";
-		return "SP";
-	}
-	else {
-		echo "\nthis is an RP";
-		return "RP";
-	}
-}
+// function get_ptype($page) {
+// 	if (strpos($page, "BLSV") === FALSE) {
+// 		echo "\nthis is an SP";
+// 		return "SP";
+// 	}
+// 	else {
+// 		echo "\nthis is an RP";
+// 		return "RP";
+// 	}
+// }
 
 function get_stats_page($player_id, $url) {
 
@@ -325,11 +325,11 @@ function get_stats_page($player_id, $url) {
 	}
 }
 
-function get_total_points_from_page($ptype, $stats) {
+function get_total_points_from_page($player_type, $stats) {
 
 	global $dbconn;
 
-	global $player_type;
+	// global $player_type;
 
 	if ($player_type == "batter") {
 

@@ -2,32 +2,31 @@
 
 date_default_timezone_set('America/New_York');
 
-$cwd = "";
+// $cwd = "";
 
-if (getcwd() == "/home/tomgsmith99") {
-	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/";
-}
+// if (getcwd() == "/home/tomgsmith99") {
+// 	$cwd = "/home/tomgsmith99/bin/baseball-update-stats/";
+// }
 
-include $cwd . ".env.php";
+// include $cwd . ".env.php";
 
-echo "\nthe base path is: " . $base_path;
-echo "\nthe web home is: " . $web_home;
-echo "\n";
+include ".env.php";
 
-// web paths
-define("WEB_HOME", $web_home);
-define("VIEWS", WEB_HOME . "/views");
+include "includes/get_dbconn.php";
+include "includes/get_batch_of_players.php";
+include "includes/initialize_table.php";
+include "includes/update_single_player_func.php";
 
 // filesystem paths
-define("BASE_PATH", $base_path . '/' . $dir);
-define("INCLUDES_PATH", BASE_PATH . "/includes");
-define("HTML_PATH", BASE_PATH . "/html");
+// define("BASE_PATH", $base_path . '/' . $dir);
+// define("INCLUDES_PATH", BASE_PATH . "/includes");
+// define("HTML_PATH", BASE_PATH . "/html");
 
 /*************************************************************/
 
-define("QUERIES_PATH", BASE_PATH . "/queries");
+// define("QUERIES_PATH", BASE_PATH . "/queries");
 
-include INCLUDES_PATH . "/get_dbconn.php";
+// include INCLUDES_PATH . "/get_dbconn.php";
 
 $dbconn = get_dbconn();
 
@@ -35,9 +34,9 @@ $this_year = date("Y");
 
 $today = date("z");
 
-include INCLUDES_PATH . "/get_batch_of_players.php";
-include INCLUDES_PATH . "/initialize_table.php";
-include INCLUDES_PATH . "/update_single_player_func.php";
+// include INCLUDES_PATH . "/get_batch_of_players.php";
+// include INCLUDES_PATH . "/initialize_table.php";
+// include INCLUDES_PATH . "/update_single_player_func.php";
 // include INCLUDES_PATH . "/upload_logs_to_s3.php";
 // include INCLUDES_PATH . "/generate_home_page.php";
 
@@ -183,10 +182,10 @@ function update_players() {
 
 function update_owners() {
 	global $dbconn;
-	$this_year = $GLOBALS["this_year"];
-	$today = $GLOBALS["today"];
+	global $this_year;
+	global $today;
 
-	$query = file_get_contents(QUERIES_PATH . "/update_current_owners.sql");
+	$query = file_get_contents("queries/update_current_owners.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 
 	echo "\n" . $query . "\n";
@@ -270,7 +269,7 @@ function update_owners() {
 	// update the ownersXseasons_current table with
 	// yesterday points
 
-	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");
+	$query = file_get_contents("queries/update_owners_recent_pts.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 	$query = str_replace("{{day}}", ($today - 1), $query);
 	$query = str_replace("{{column}}", "yesterday", $query);
@@ -288,7 +287,7 @@ function update_owners() {
 	// update the ownersXseasons_current table with
 	// recent points
 
-	$query = file_get_contents(QUERIES_PATH . "/update_owners_recent_pts.sql");
+	$query = file_get_contents("queries/update_owners_recent_pts.sql");
 	$query = str_replace("{{season}}", $this_year, $query);
 	$query = str_replace("{{day}}", ($today - 5), $query);
 	$query = str_replace("{{column}}", "recent", $query);
@@ -305,12 +304,12 @@ function update_owners() {
 
 function update_picked() {
 	global $dbconn;
-	$this_year = $GLOBALS["this_year"];
+	global $this_year;
 
 	/************************************************/
 	// update player acquired totals
 
-	$query = file_get_contents(QUERIES_PATH . "/update_player_picked.sql");
+	$query = file_get_contents("queries/update_player_picked.sql");
 	$query = str_replace("{{column}}", "acquired", $query);
 	$query = str_replace("{{season}}", $this_year, $query);
 
@@ -324,21 +323,9 @@ function update_picked() {
 	/************************************************/
 	// update player drafted totals
 
-	$query = file_get_contents(QUERIES_PATH . "/update_player_picked.sql");
+	$query = file_get_contents("queries/update_player_picked.sql");
 	$query = str_replace("{{column}}", "drafted", $query);
 	$query = str_replace("{{season}}", $this_year, $query);
-
-	mysqli_query($dbconn, $query);
-
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
-
-	/************************************************/
-	// update player picked (acquired + drafted) totals
-
-	$query = "UPDATE players_current SET picked=(acquired + drafted)";
 
 	mysqli_query($dbconn, $query);
 

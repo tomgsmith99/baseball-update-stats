@@ -1,6 +1,2 @@
 .DS_Store
-.env.json
-*log.txt*
-/html/home_page/*
-index.html
 .env.php
