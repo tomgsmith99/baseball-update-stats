@@ -8,7 +8,11 @@ $pitcher_flag = '<th title="Blown Saves" class="Table__TH">BLSV</th>';
 
 $base_url = "https://www.espn.com/mlb/player/stats/_/id/";
 
-global $this_year;
+// global $this_year;
+
+$this_year = date("Y");
+
+echo "this year is: " . $this_year;
 
 $this_year_flag = '<td class="Table__TD">' . $this_year . "</td>";
 
@@ -50,34 +54,26 @@ function update_player($row) {
 
 	$stats_page = get_stats_page($player_id, $url);
 
-	if ($stats_page == "") {
+	if ($stats_page != "") {
 
-		$total_points = 0;
-		$yday_points = 0;
-		$recent_points = 0;
-		$value = 0;
+		// parse the html of the stats page and calculate the total points
+		// for the player
+		get_total_points_from_page($stats_page, $player_id);
 
-		$query = "UPDATE players_current SET points=" . $total_points;
-		$query .= ", yesterday=" . $yday_points;
-		$query .= ", recent=" . $recent_points;
-		$query .= ", value=" . $value;
-		$query .= " WHERE player_id=" . $player_id;
-		$query .= " AND season=" . $this_year;
+		$query = "SELECT points, salary FROM players_current WHERE player_id = $player_id AND season = $this_year";
 
-		echo "\n" . $query;
-
-		mysqli_query($dbconn, $query);
+		$result = mysqli_query($dbconn, $query);
 
 		if (mysqli_error($dbconn)) {
 			echo mysqli_error($dbconn);
 			exit;
 		}
-	}
-	else {
 
-		// parse the html of the stats page and calculate the total points
-		// for the player
-		$total_points = get_total_points_from_page($player_type, $stats_page);
+		$row = mysqli_fetch_array($result);
+
+		$total_points = $row["points"];
+
+		echo "the total points are: " . $total_points;
 
 		/*************************************************************/
 		// get player's recent point total
@@ -112,6 +108,7 @@ function update_player($row) {
 
 			if ($total_points < $recent_points_total) {
 				echo "\nWarning: today total points are less than recent total points";
+				$recent_points = -1;
 			}
 			else {
 				$recent_points = $total_points - $recent_points_total;
@@ -142,7 +139,6 @@ function update_player($row) {
 			$yday_points = -1;
 		}
 		else {
-
 			$yday_points_row = mysqli_fetch_array($yday_points_res);
 
 			$yday_points_total = $yday_points_row["points"];
@@ -164,8 +160,8 @@ function update_player($row) {
 
 		update_player_status("found stats", $player_id);
 
-		$query = "UPDATE players_current SET points=" . $total_points;
-		$query .= ", yesterday=" . $yday_points;
+		$query = "UPDATE players_current SET";
+		$query .= " yesterday=" . $yday_points;
 		$query .= ", recent=" . $recent_points;
 		$query .= ", update_status='found stats'";
 		$query .= ", updated=" . $today;
@@ -183,7 +179,27 @@ function update_player($row) {
 		}
 	}
 
-	// $id = $player_id . "_" . $this_year . "_" . $today;
+	else {
+
+		$total_points = 0;
+
+		$query = "UPDATE players_current SET";
+		$query .= " yesterday=-1";
+		$query .= ", recent=-1";
+		$query .= ", updated=" . $today;
+		$query .= ", value=-1";
+		$query .= " WHERE player_id=" . $player_id;
+		$query .= " AND season=" . $this_year;
+
+		echo "\n" . $query;
+
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
+	}
 
 	$query = "REPLACE players_points_current SET";
 	$query .= " player_id=" . $player_id;
@@ -215,17 +231,6 @@ function update_player($row) {
 		exit;
 	}
 }
-
-// function get_ptype($page) {
-// 	if (strpos($page, "BLSV") === FALSE) {
-// 		echo "\nthis is an SP";
-// 		return "SP";
-// 	}
-// 	else {
-// 		echo "\nthis is an RP";
-// 		return "RP";
-// 	}
-// }
 
 function get_stats_page($player_id, $url) {
 
@@ -285,7 +290,7 @@ function get_stats_page($player_id, $url) {
 		$key_string_01 = '<th title="Blown Saves" class="Table__TH">BLSV</th></tr></thead>';
 	}
 
-	echo "the player type is: " . $player_type;
+	echo "the player type is: " . $player_type . "\n";
 
 	// try to find the key string in the web page
 	if (strpos($page, $key_string_01) === FALSE) {
@@ -316,7 +321,9 @@ function get_stats_page($player_id, $url) {
 		$arr = explode('<td class="Table__TD">', $this_year_row);
 
 		foreach ($arr as $cell) {
-			$stats[] = rtrim($cell, "</td>");
+			$x = rtrim($cell, "</td>");
+			$x = rtrim($cell, "</td></tr");
+			$stats[] = $x;
 		}
 
 		print_r($stats);
@@ -325,36 +332,51 @@ function get_stats_page($player_id, $url) {
 	}
 }
 
-function get_total_points_from_page($player_type, $stats) {
+function get_total_points_from_page($stats, $player_id) {
 
 	global $dbconn;
 
-	// global $player_type;
+	global $player_type;
+
+	global $this_year;
 
 	if ($player_type == "batter") {
+		$runs = $stats[3];
+		$hits = $stats[4];
+		$doubles = $stats[5];
+		$triples = $stats[6];
+		$hr = $stats[7];
+		$rbi = $stats[8];
+		$walks = $stats[9];
+		$sb = $stats[12];
 
-		$final_stats["runs"] = $stats[3];
-		$final_stats["hits"] = $stats[4];
-		$final_stats["doubles"] = $stats[5];
-		$final_stats["triples"] = $stats[6];
-		$final_stats["hr"] = $stats[7];
-		$final_stats["rbi"] = $stats[8];
-		$final_stats["bb"] = $stats[9];
-		$final_stats["sb"] = $stats[12];
+		$query = "UPDATE players_current SET runs = $runs, hits = $hits, doubles = $doubles, triples = $triples, hr = $hr, rbi = $rbi, walks = $walks, sb = $sb WHERE player_id = $player_id AND season = $this_year";
 
-		$final_stats["singles"] = $final_stats["hits"] - $final_stats["hr"] - $final_stats["triples"] - $final_stats["doubles"];
+		echo $query . "\n";
 
-		$points = $final_stats["runs"] + $final_stats["singles"] + ($final_stats["doubles"] * 2) + ($final_stats["triples"] * 3) + ($final_stats["hr"] * 4) + $final_stats["rbi"] + ($final_stats["sb"] * 2) + $final_stats["bb"];
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
 	}
 	else {
+		$wins = $stats[3];
+		$ip = intval($stats[9]);
+		$saves = $stats[16];
+		$k = $stats[10];
 
-		$final_stats["wins"] = $stats[3];
-		$final_stats["ip"] = $stats[9];
-		$final_stats["saves"] = $stats[16];
-		$final_stats["k"] = $stats[10];
+		$query = "UPDATE players_current SET wins = $wins, saves = $saves, ip = $ip, k = $k WHERE player_id = $player_id AND season = $this_year";
 
-		$points = ($final_stats["wins"] * 10) + intval($final_stats["ip"]) + ($final_stats["saves"] * 10) + $final_stats["k"];
+		echo $query . "\n";
 
+		mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
 	}
 
 	print_r($final_stats);

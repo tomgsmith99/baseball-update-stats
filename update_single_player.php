@@ -2,6 +2,8 @@
 
 include ".env.php";
 
+$this_year = date("Y");
+
 include "includes/get_dbconn.php";
 include "includes/get_batch_of_players.php";
 include "includes/update_single_player_func.php";
@@ -11,7 +13,7 @@ $dbconn = get_dbconn();
 
 date_default_timezone_set("America/New_York");
 
-$this_year = date("Y");
+echo "\n\n\nthis year is: " . $this_year;
 
 $today = date("z");
 

@@ -247,11 +247,54 @@ function update_owners() {
 		exit;
 	}
 
-	$place = 1;
+// places = {}
+
+// prev_owner_points = 0
+
+// i = 0
+
+// place = 0
+
+// for row in rows:
+
+// 	i += 1
+
+// 	owner_id = row["owner_id"]
+
+// 	if row["points"] == prev_owner_points:
+// 		places[owner_id] = place
+// 	else:
+// 		places[owner_id] = i
+// 		place = i
+
+// 	prev_owner_points = row["points"]
+
+	$places = [];
+
+	$prev_owner_points = 0;
+
+	$i = 0;
+
+	$place = 0;
 
 	while ($row = mysqli_fetch_assoc($result)) {
+
+		$i++;
+
+		$owner_id = $row["owner_id"];
+
+		if ($row["points"] == $prev_owner_points) {
+			// $places[$owner_id] = $place;
+		}
+		else {
+			// $places[$owner_id] = $i;
+			$place = $i;
+		}
+
+		$prev_owner_points = $row["points"];
+
 		$query = "UPDATE ownersXseasons_current SET place = " . $place;
-		$query .= " WHERE owner_id = " . $row["owner_id"];
+		$query .= " WHERE owner_id = " . $row["owner_id"] . " AND season = " . $this_year;
 
 		echo "\n" . $query . "\n";
 
@@ -261,9 +304,25 @@ function update_owners() {
 			echo mysqli_error($dbconn);
 			exit;
 		}
-
-		$place++;
 	}
+
+	// $place = 1;
+
+	// while ($row = mysqli_fetch_assoc($result)) {
+	// 	$query = "UPDATE ownersXseasons_current SET place = " . $place;
+	// 	$query .= " WHERE owner_id = " . $row["owner_id"];
+
+	// 	echo "\n" . $query . "\n";
+
+	// 	mysqli_query($dbconn, $query);
+
+	// 	if (mysqli_error($dbconn)) {
+	// 		echo mysqli_error($dbconn);
+	// 		exit;
+	// 	}
+
+	// 	$place++;
+	// }
 
 	/************************************************/
 	// update the ownersXseasons_current table with
