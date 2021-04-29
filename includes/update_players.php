@@ -41,6 +41,26 @@ function update_players($dbconn, $season, $today) {
 	}
 }
 
+function get_batch_of_players($dbconn, $today, $season, $batch_size) {
+
+	$query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf";
+	$query .= " FROM players_current_view";
+	$query .= " WHERE updated < " . $today;
+	$query .= " AND checked < 2";
+	$query .= " ORDER BY checked ASC";
+	$query .= " LIMIT " . $batch_size;
+
+	echo $query . "\n";
+
+	$result = mysqli_query($dbconn, $query);
+
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
+
+	return $result;
+}
 
 function initialize_players_table($dbconn) {
 
@@ -56,36 +76,37 @@ function initialize_players_table($dbconn) {
 		echo "initialized players_current table...\n";
 	}
 }
-// Double-check to see that players are done.
 
-// if (players_are_done()) {
+function players_are_done($dbconn, $today, $season) {
+// ************* check if stats are all done for today *****************/
 
-// 	echo "\nplayers are complete. Now updating owners...\n";
+	$query = "SELECT checked, updated FROM players_current";
+	$query .= " WHERE updated < " . $today;
+	$query .= " AND checked < 2 AND season=$season";
 
-// 	update_owners();
+	echo $query . "\n";
 
-// 	update_picked();
+	$result = mysqli_query($dbconn, $query);
 
-// 	update_last_updated();
+	if (mysqli_error($dbconn)) {
+		echo mysqli_error($dbconn);
+		exit;
+	}
 
-// 	summarize();
+	$num_rows = mysqli_num_rows($result);
 
-// 	exit;
-// }
-// else {
-// 	echo "something went wrong. The players are not finished updating.\n";
-// 	exit;
-// }
+	echo "\nthe number of players that have not been updated or checked is: " . $num_rows . "\n";
 
-// function summarize() {
-// 	global $start_time;
+	if ((int)$num_rows === 0) { return TRUE; }
+	else { return FALSE; }
+}
 
-// 	echo "\n*****************************\n";
-// 	echo "Summary\n";
+function update_batch_of_players($dbconn, $today, $season, $batch_size) {
 
-// 	$end_time = time();
+	// gets a mysqli_result
+	$batch_of_players = get_batch_of_players($dbconn, $today, $season, $batch_size);
 
-// 	$elapsed_time = $end_time - $start_time;
-
-// 	echo "\nelapsed time: " . $elapsed_time . " seconds";
-// }
+	while ($row = mysqli_fetch_array($batch_of_players)) {
+		update_player($dbconn, $today, $season, $row);
+	}
+}
