@@ -155,7 +155,7 @@ function get_prev_points($dbconn, $player_id, $season, $today, $total_points, $t
 
 function get_total_points($dbconn, $player_id, $season) {
 
-	$query = "SELECT points, salary FROM players_current WHERE player_id = $player_id AND season = $season";
+	$query = "SELECT points, prev_points, salary FROM players_current WHERE player_id = $player_id AND season = $season";
 
 	echo "$query\n";
 
