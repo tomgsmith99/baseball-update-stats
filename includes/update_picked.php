@@ -14,14 +14,14 @@ function update_picked($dbconn, $season, $today) {
 
 function update_count($dbconn, $season, $column) {
 
-	$query = "UPDATE players_current pc
+	$query = "UPDATE playersXseasons pxs
 		INNER JOIN (
 		  SELECT player_id, SUM($column) as total
-		  FROM ownersXrosters_current
+		  FROM ownersXrosters
 		  WHERE season=$season
 		  GROUP BY player_id
-		) x ON pc.player_id = x.player_id
-		SET pc.$column = x.total
+		) x ON pxc.player_id = x.player_id
+		SET pxs.$column = x.total 
 	";
 
 	mysqli_query($dbconn, $query);

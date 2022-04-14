@@ -26,9 +26,11 @@ $start_time = time();
 
 update_players($dbconn, $season, $today);
 
+echo "updating players is complete.";
+
 update_owners($dbconn, $season, $today);
 
-update_picked($dbconn, $season, $today);
+// update_picked($dbconn, $season, $today);
 
 update_last_updated($dbconn);
 
