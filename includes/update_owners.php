@@ -3,8 +3,8 @@
 function update_owners($dbconn, $season, $today) {
 
 	/*************************************************************/
-	// update the ownersXpoints table
-	update_ownersXpoints_table($dbconn, $season, $today);
+	// update the owner_x_points table
+	update_owner_x_points($dbconn, $season, $today);
 
 	echo "updated owner_x_points\n";
 
@@ -23,7 +23,7 @@ function update_owners($dbconn, $season, $today) {
 	echo "updated yesterday and recent points\n";
 }
 
-function update_ownersXpoints_table($dbconn, $season, $today) {
+function update_owner_x_points($dbconn, $season, $today) {
 
 	$query = "SELECT owner_id, points FROM owner_x_points_current WHERE season=$season";
 
@@ -37,10 +37,10 @@ function update_ownersXpoints_table($dbconn, $season, $today) {
 	}
 
 	while ($row = mysqli_fetch_assoc($result)) {
+
 		$owner_id = $row["owner_id"];
 
-		$query = "REPLACE ownersXpoints SET";
-		$query .= " points=" . $row["points"];
+		$query = "REPLACE owner_x_points SET points = " . $row["points"];
 		$query .= ", season=" . $season;
 		$query .= ", owner_id=" . $owner_id;
 		$query .= ", day=" . $today;
@@ -136,7 +136,7 @@ function update_points($dbconn, $season, $today, $timeframe) {
 
 		echo "the owner total points are: " . $total_points;
 
-		$query = "SELECT points FROM ownersXpoints WHERE season=$season AND day=$day AND owner_id=$owner_id";
+		$query = "SELECT points FROM owner_x_points WHERE season=$season AND day=$day AND owner_id=$owner_id";
 
 		echo "\n" . $query . "\n";
 

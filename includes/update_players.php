@@ -16,8 +16,6 @@ function update_players($dbconn, $season, $today) {
 
 	$start_time = time();
 
-	initialize_players_table($dbconn, $season);
-
 	/*************************************************************/
 	// update players
 

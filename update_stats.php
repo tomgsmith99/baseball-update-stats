@@ -8,8 +8,6 @@ include "includes/get_dbconn.php";
 
 include "includes/update_owners.php";
 
-include "includes/update_picked.php";
-
 include "includes/update_players.php";
 
 /*************************************************************/
@@ -24,33 +22,9 @@ $start_time = time();
 
 /*************************************************************/
 
-var_dump($argv);
+get_command_line_args($dbconn, $season, $today, $argv);
 
-if (in_array('--player', $argv)) {
-
-    $key = array_search('--player', $argv);
-
-    $id = $argv[$key + 1];
-
-    echo "the player id is: $id";
-
-    $query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf FROM player_x_season_detail WHERE player_id = $id AND season = $season";
-
-	echo $query . "\n";
-
-	$result = mysqli_query($dbconn, $query);
-
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
-
-	$row = mysqli_fetch_array($result);
-
-    update_player($dbconn, $today, $season, $row);
-
-    exit;
-}
+initialize_players_table($dbconn, $season);
 
 update_players($dbconn, $season, $today);
 
@@ -63,6 +37,40 @@ update_last_updated($dbconn);
 summarize($start_time);
 
 /*************************************************************/
+
+function get_command_line_args($dbconn, $season, $today, $argv) {
+
+	if (in_array('--player', $argv)) {
+
+	    $key = array_search('--player', $argv);
+
+	    $id = $argv[$key + 1];
+
+	    echo "the player id is: $id\n";
+
+	    $query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf FROM player_x_season_detail WHERE player_id = $id AND season = $season";
+
+		echo $query . "\n";
+
+		$result = mysqli_query($dbconn, $query);
+
+		if (mysqli_error($dbconn)) {
+			echo mysqli_error($dbconn);
+			exit;
+		}
+
+		$row = mysqli_fetch_array($result);
+
+		if (count($row) == 1) {
+			update_player($dbconn, $today, $season, $row);
+		}
+		else {
+			echo "Could not find player_id $id\n";
+		}
+
+	    exit;
+	}
+}
 
 function summarize($start_time) {
 
