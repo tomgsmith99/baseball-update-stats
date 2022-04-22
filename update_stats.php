@@ -49,10 +49,8 @@ if (in_array('--player', $argv)) {
 
     update_player($dbconn, $today, $season, $row);
 
+    exit;
 }
-
-exit;
-
 
 update_players($dbconn, $season, $today);
 
