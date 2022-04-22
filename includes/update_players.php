@@ -46,7 +46,7 @@ function get_batch_of_players($dbconn, $today, $season, $batch_size) {
 	$query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf";
 	$query .= " FROM player_x_season_detail";
 	$query .= " WHERE updated < " . $today;
-	$query .= " AND checked < 2";
+	$query .= " AND checked < 2 AND season = $season";
 	$query .= " ORDER BY checked ASC";
 	$query .= " LIMIT " . $batch_size;
 

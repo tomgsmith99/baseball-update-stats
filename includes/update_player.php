@@ -1,10 +1,20 @@
 <?php
 
-function update_player($dbconn, $today, $season, $row) {
+function get_player_url($espn_stats_id, $player_type) {
 
-	$base_url = "https://www.espn.com/mlb/player/stats/_/id/";
-	$pitcher_flag = '<th title="Blown Saves" class="Table__TH">BLSV</th>';
-	$this_year_flag = '<td class="Table__TD">' . $season . "</td>";
+	$url = 'https://www.espn.com/mlb/player/stats/_/id/' . $espn_stats_id;
+
+	if ($player_type == 'pitcher') {
+		$url .= '/category/pitching';
+	}
+	else {
+		$url .= '/category/batting';
+	}
+
+	return $url;
+}
+
+function update_player($dbconn, $today, $season, $row) {
 
 	if ($season == 2020) {
 		$first_day = 205;
@@ -30,9 +40,7 @@ function update_player($dbconn, $today, $season, $row) {
 	// get the player stats page. function includes error checking
 	// for 1) url can be opened; 2) url contains stats for this year
 
-	$url = $base_url . $row["espn_stats_id"];
-
-	$player = get_stats($dbconn, $pitcher_flag, $player_id, $season, $this_year_flag, $url);
+	$player = get_stats($dbconn, $row, $season);
 
 	$stats_fields = ["doubles", "hits", "hr", "ip", "k", "rbi", "runs", "saves", "sb", "triples", "walks", "wins"];
 
@@ -119,8 +127,6 @@ function update_player($dbconn, $today, $season, $row) {
 		echo "updating the playersXseasons table worked.\n";
 	}
 
-	// update_players_points_current_table($dbconn, $player_id, $season, $today, $total_points);
-
 	update_ownersXrosters($dbconn, $player_id, $season, $total_points);
 
 	echo "updating the ownersXrosters table worked.\n";
@@ -199,8 +205,6 @@ function get_prev_points($dbconn, $player_id, $season, $today, $total_points, $t
 
 function get_total_points($dbconn, $player_id, $season) {
 
-	// $query = "SELECT points, prev_points, salary FROM players_current WHERE player_id = $player_id AND season = $season";
-
 	$query = "SELECT points, prev_points, salary FROM playersXseasons WHERE player_id = $player_id AND season = $season";
 
 	echo "$query\n";
@@ -217,7 +221,22 @@ function get_total_points($dbconn, $player_id, $season) {
 	return $row;
 }
 
-function get_stats($dbconn, $pitcher_flag, $player_id, $season, $this_year_flag, $url) {
+function get_stats($dbconn, $row, $season) {
+
+	$player_id = $row['player_id'];
+
+	$player_type = '';
+
+	if ($row['pos'] == 'RP' || $row['pos'] == 'SP') {
+		$player_type = 'pitcher';
+	}
+	else {
+		$player_type = 'batter';
+	}
+
+	$url = get_player_url($row['espn_stats_id'], $player_type);
+
+	$this_year_flag = '<td class="Table__TD">' . $season . "</td>";
 
 	$player["status"] = "";
 	$player["player_type"] = "";
@@ -256,20 +275,28 @@ function get_stats($dbconn, $pitcher_flag, $player_id, $season, $this_year_flag,
 	/*************************************************************/
 	// are we looking at a batter or a pitcher?
 
-	if (strpos($page, $pitcher_flag) === FALSE) {
-		$player_type = "batter";
-
+	if ($player_type == "batter") {
 		$key_string_01 = '<th title="Wins Above Replacement" class="Table__TH">WAR</th></tr></thead>';
 	}
 	else {
-		$player_type = "pitcher";
-
 		$key_string_01 = '<th title="Blown Saves" class="Table__TH">BLSV</th></tr></thead>';
 	}
 
-	echo "the player type is: " . $player_type . "...\n";
-
 	$player["player_type"] = $player_type;
+
+	// if (strpos($page, $pitcher_flag) === FALSE) {
+	// 	$player_type = "batter";
+
+	// 	$key_string_01 = '<th title="Wins Above Replacement" class="Table__TH">WAR</th></tr></thead>';
+	// }
+	// else {
+	// 	$player_type = "pitcher";
+
+	// 	$key_string_01 = '<th title="Blown Saves" class="Table__TH">BLSV</th></tr></thead>';
+	// }
+
+	// echo "the player type is: " . $player_type . "...\n";
+
 
 	/*************************************************************/
 	// try to find the key string in the web page
@@ -360,13 +387,7 @@ function update_ownersXrosters($dbconn, $player_id, $season, $total_points) {
 
 function update_raw_stats_in_player_db_table($dbconn, $final_stats, $player_id, $season) {
 
-	// $query = "REPLACE INTO player_x_points_current SET ";
-
 	$query = "REPLACE INTO player_x_points_current (player_id, season, ";
-
-	// foreach ($final_stats as $col => $value) {
-	// 	$query .= "$col=$value, ";
-	// }
 
 	foreach ($final_stats as $col => $value) {
 		$query .= "$col, ";
@@ -383,8 +404,6 @@ function update_raw_stats_in_player_db_table($dbconn, $final_stats, $player_id, 
 	$query = rtrim($query, ", ");
 
 	$query .= ")";
-
-	// $query .= " WHERE player_id=$player_id AND season=$season";
 
 	echo $query . "\n";
 
@@ -413,20 +432,20 @@ function update_player_status($dbconn, $season, $status, $player_id) {
 	}
 }
 
-function update_players_points_current_table($dbconn, $player_id, $season, $today, $total_points) {
+// function update_players_points_current_table($dbconn, $player_id, $season, $today, $total_points) {
 
-	$query = "REPLACE players_points_current SET";
-	$query .= " player_id=" . $player_id;
-	$query .= ", points=" . $total_points;
-	$query .= ", day=" . $today;
-	$query .= ", season=" . $season;
+// 	$query = "REPLACE players_points_current SET";
+// 	$query .= " player_id=" . $player_id;
+// 	$query .= ", points=" . $total_points;
+// 	$query .= ", day=" . $today;
+// 	$query .= ", season=" . $season;
 
-	echo "\n" . $query;
+// 	echo "\n" . $query;
 
-	mysqli_query($dbconn, $query);
+// 	mysqli_query($dbconn, $query);
 
-	if (mysqli_error($dbconn)) {
-		echo mysqli_error($dbconn);
-		exit;
-	}
-}
+// 	if (mysqli_error($dbconn)) {
+// 		echo mysqli_error($dbconn);
+// 		exit;
+// 	}
+// }
