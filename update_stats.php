@@ -70,6 +70,21 @@ function get_command_line_args($dbconn, $season, $today, $argv) {
 
 	    exit;
 	}
+
+	if (in_array('--players', $argv)) {
+
+		update_players($dbconn, $season, $today);
+
+	    exit;
+	}
+
+	if (in_array('--owners', $argv)) {
+
+		update_owners($dbconn, $season, $today);
+
+	    exit;
+	}
+
 }
 
 function summarize($start_time) {
