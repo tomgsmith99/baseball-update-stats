@@ -49,7 +49,7 @@ function update_player($dbconn, $today, $season, $row) {
 	}
 
 	if ($player["status"] != "ok") {
-		echo $player["status"] . "...\n";
+		echo "\n" . $player["status"] . "...\n";
 		$total_points = 0;
 	}
 	else {
@@ -283,20 +283,6 @@ function get_stats($dbconn, $row, $season) {
 	}
 
 	$player["player_type"] = $player_type;
-
-	// if (strpos($page, $pitcher_flag) === FALSE) {
-	// 	$player_type = "batter";
-
-	// 	$key_string_01 = '<th title="Wins Above Replacement" class="Table__TH">WAR</th></tr></thead>';
-	// }
-	// else {
-	// 	$player_type = "pitcher";
-
-	// 	$key_string_01 = '<th title="Blown Saves" class="Table__TH">BLSV</th></tr></thead>';
-	// }
-
-	// echo "the player type is: " . $player_type . "...\n";
-
 
 	/*************************************************************/
 	// try to find the key string in the web page
