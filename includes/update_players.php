@@ -41,12 +41,16 @@ function update_players($dbconn, $season, $today) {
 
 function get_batch_of_players($dbconn, $today, $season, $batch_size) {
 
-	$query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf";
-	$query .= " FROM player_x_season_detail";
-	$query .= " WHERE updated < " . $today;
-	$query .= " AND checked < 2 AND season = $season";
-	$query .= " ORDER BY checked ASC";
-	$query .= " LIMIT " . $batch_size;
+
+	$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
+
+	// $query = "SELECT player_id, salary, pos, update_status, espn_stats_id, fnf";
+	// // $query .= " FROM player_x_season_detail";
+	// $query .= " FROM player_x_season_detail";
+	// $query .= " WHERE updated < " . $today;
+	// $query .= " AND checked < 2 AND season = $season";
+	// $query .= " ORDER BY checked ASC";
+	// $query .= " LIMIT " . $batch_size;
 
 	echo $query . "\n";
 
