@@ -41,7 +41,9 @@ function update_players($dbconn, $season, $today) {
 
 function get_batch_of_players($dbconn, $today, $season, $batch_size) {
 
-	$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
+	// $query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
+
+	$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND p.player_id NOT IN (5248) AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
 
 	echo $query . "\n";
 
