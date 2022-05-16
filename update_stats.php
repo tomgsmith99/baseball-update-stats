@@ -32,7 +32,7 @@ echo "updating players is complete.";
 
 update_owners($dbconn, $season, $today);
 
-update_last_updated($dbconn);
+update_last_updated($dbconn, $season);
 
 summarize($start_time);
 
