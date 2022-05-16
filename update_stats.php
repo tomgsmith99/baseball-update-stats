@@ -103,7 +103,7 @@ function summarize($start_time) {
 	echo "\nelapsed time: " . $elapsed_time . " seconds";
 }
 
-function update_last_updated($dbconn) {
+function update_last_updated($dbconn, $season) {
 
 	$update_desc = date("D F jS, o, g:ia");
 
