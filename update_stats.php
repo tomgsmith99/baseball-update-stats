@@ -48,7 +48,7 @@ function get_command_line_args($dbconn, $season, $today, $argv) {
 
 	    echo "the player id is: $id\n";
 
-		$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND pxs.season = $season";
+		$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = $id AND p.player_id = pxs.player_id AND pxs.season = $season";
 
 		echo $query . "\n";
 
@@ -61,11 +61,16 @@ function get_command_line_args($dbconn, $season, $today, $argv) {
 
 		$row = mysqli_fetch_array($result);
 
-		if (count($row) == 1) {
+		echo var_dump($row);
+
+		if (mysqli_num_rows($result) == 0) {
+			echo "Could not find player_id $id\n";
+		}
+		else if (mysqli_num_rows($result) == 1) {
 			update_player($dbconn, $today, $season, $row);
 		}
 		else {
-			echo "Could not find player_id $id\n";
+			echo "Found more than one result for player_id $id\n";
 		}
 
 	    exit;
@@ -84,7 +89,6 @@ function get_command_line_args($dbconn, $season, $today, $argv) {
 
 	    exit;
 	}
-
 }
 
 function summarize($start_time) {
@@ -103,7 +107,7 @@ function update_last_updated($dbconn) {
 
 	$update_desc = date("D F jS, o, g:ia");
 
-	$query = "INSERT INTO updates SET update_desc='" . $update_desc . "'";
+	$query = "INSERT INTO updates SET update_desc='$update_desc', season=$season";
 
 	echo "\n$query\n";
 
