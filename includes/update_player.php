@@ -76,6 +76,10 @@ function update_player($dbconn, $today, $season, $row) {
 
 		$total_points = $row['points'];
 
+		if ($player_id == 4687 && $season == 2022) {
+			$total_points = $total_points + 377;
+		}
+
 		/*************************************************************/
 		// update playersXseasons table with total points
 
