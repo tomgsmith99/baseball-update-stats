@@ -79,7 +79,43 @@ function update_player($dbconn, $today, $season, $row) {
 		if ($player_id == 4687 && $season == 2022) {
 			$total_points = $total_points + 377;
 		}
+		if ($player_id == 4628 && $season == 2022) { // bell
+			$total_points = $total_points + 343;
+		}
+		if ($player_id == 2465 && $season == 2022) { // vazquez
+			$total_points = $total_points + 222;
+		}
+		if ($player_id == 4312 && $season == 2022) { // benintendi
+			$total_points = $total_points + 264;
+		}
+		if ($player_id == 4612 && $season == 2022) { // hader
+			$total_points = $total_points + 393;
+		}
+		if ($player_id == 4488 && $season == 2022) {
+			$total_points = $total_points + 134;
+		}
+		if ($player_id == 4453 && $season == 2022) { // rogers
+			$total_points = $total_points + 379;
+		}
+		if ($player_id == 2113 && $season == 2022) { // syndergaard
+			$total_points = $total_points + 194;
+		}
+		if ($player_id == 5148 && $season == 2022) {
+			$total_points = $total_points + 68;
+		}
+		if ($player_id == 2172 && $season == 2022) { // gallo
+			$total_points = $total_points + 179;
+		}
+		if ($player_id == 2537 && $season == 2022) { // peralta
+			$total_points = $total_points + 227;
+		}
+		if ($player_id == 1986 && $season == 2022) { // peralta
+			$total_points = $total_points + 168;
+		}
 
+		// if ($player_id == 4024 && $season == 2022) { // canha
+		// 	$total_points = $total_points + 91;
+		// }		
 		/*************************************************************/
 		// update playersXseasons table with total points
 
