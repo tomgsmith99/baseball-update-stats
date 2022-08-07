@@ -112,7 +112,18 @@ function update_player($dbconn, $today, $season, $row) {
 		if ($player_id == 1986 && $season == 2022) { // peralta
 			$total_points = $total_points + 168;
 		}
-
+		if ($player_id == 4571 && $season == 2022) { // mahle
+			$total_points = $total_points + 268;
+		}		
+		if ($player_id == 4132 && $season == 2022) { // iglesias
+			$total_points = $total_points + 263;
+		}
+		if ($player_id == 4190 && $season == 2022) { // iglesias
+			$total_points = $total_points + 128;
+		}
+		if ($player_id == 4546 && $season == 2022) { // montgomery
+			$total_points = $total_points + 241;
+		}
 		// if ($player_id == 4024 && $season == 2022) { // canha
 		// 	$total_points = $total_points + 91;
 		// }		
