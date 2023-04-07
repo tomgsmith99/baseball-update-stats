@@ -41,7 +41,7 @@ function update_players($dbconn, $season, $today) {
 
 function get_batch_of_players($dbconn, $today, $season, $batch_size) {
 
-	$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM playersXseasons AS pxs, players AS p WHERE p.player_id = pxs.player_id AND p.player_id NOT IN (5248, 5433) AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
+	$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM player_x_season AS pxs, players AS p WHERE p.player_id = pxs.player_id AND p.player_id NOT IN (5248, 5433) AND updated < $today AND checked < 2 AND pxs.season = $season ORDER BY checked ASC LIMIT $batch_size";
 
 	echo $query . "\n";
 
@@ -57,7 +57,7 @@ function get_batch_of_players($dbconn, $today, $season, $batch_size) {
 
 function initialize_players_table($dbconn, $season) {
 
-	$query = "UPDATE playersXseasons SET checked=0, updated=0 WHERE season=$season";
+	$query = "UPDATE player_x_season SET checked=0, updated=0 WHERE season=$season";
 
 	mysqli_query($dbconn, $query);
 
@@ -66,14 +66,14 @@ function initialize_players_table($dbconn, $season) {
 		exit;
 	}
 	else {
-		echo "initialized playersXseasons table...\n";
+		echo "initialized player_x_season table...\n";
 	}
 }
 
 function players_are_done($dbconn, $today, $season) {
 // ************* check if stats are all done for today *****************/
 
-	$query = "SELECT checked, updated FROM playersXseasons";
+	$query = "SELECT checked, updated FROM player_x_season";
 	$query .= " WHERE updated < " . $today;
 	$query .= " AND checked < 2 AND season=$season";
 

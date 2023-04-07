@@ -128,9 +128,9 @@ function update_player($dbconn, $today, $season, $row) {
 		// 	$total_points = $total_points + 91;
 		// }		
 		/*************************************************************/
-		// update playersXseasons table with total points
+		// update player_x_season table with total points
 
-		$query = "UPDATE playersXseasons SET points = $total_points WHERE player_id = $player_id AND season = $season";
+		$query = "UPDATE player_x_season SET points = $total_points WHERE player_id = $player_id AND season = $season";
 
 		echo "$query\n";
 
@@ -142,9 +142,9 @@ function update_player($dbconn, $today, $season, $row) {
 		}
 
 		/*************************************************************/
-		// update playersXpoints table with total points
+		// update player_x_points table with total points
 
-		$query = "REPLACE INTO playersXpoints (player_id, points, day, season) VALUES ($player_id, $total_points, $today, $season)";
+		$query = "REPLACE INTO player_x_points (player_id, points, day, season) VALUES ($player_id, $total_points, $today, $season)";
 
 		echo "$query\n";
 
@@ -155,7 +155,7 @@ function update_player($dbconn, $today, $season, $row) {
 			exit;
 		}
 
-		echo "updating the playersXpoints table worked.\n";
+		echo "updating the player_x_points table worked.\n";
 
 		/*************************************************************/
 
@@ -175,7 +175,7 @@ function update_player($dbconn, $today, $season, $row) {
 
 		update_derived_vals_in_player_table($dbconn, $player_id, $recent_points, $season, $today, $value, $yday_points);
 
-		echo "updating the playersXseasons table worked.\n";
+		echo "updating the player_x_season table worked.\n";
 	}
 
 	update_ownersXrosters($dbconn, $player_id, $season, $total_points);
@@ -218,7 +218,7 @@ function get_prev_points($dbconn, $player_id, $season, $today, $total_points, $t
 		$diff = 1;
 	}
 
-	$query = "SELECT points FROM playersXpoints";
+	$query = "SELECT points FROM player_x_points";
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND season=" . $season;
 	$query .= " AND day=" . ($today - $diff);
@@ -256,7 +256,7 @@ function get_prev_points($dbconn, $player_id, $season, $today, $total_points, $t
 
 function get_total_points($dbconn, $player_id, $season) {
 
-	$query = "SELECT points, prev_points, salary FROM playersXseasons WHERE player_id = $player_id AND season = $season";
+	$query = "SELECT points, prev_points, salary FROM player_x_season WHERE player_id = $player_id AND season = $season";
 
 	echo "$query\n";
 
@@ -385,7 +385,7 @@ function get_stats($dbconn, $row, $season) {
 
 function update_derived_vals_in_player_table($dbconn, $player_id, $recent_points, $season, $today, $value, $yday_points) {
 
-	$query = "UPDATE playersXseasons SET";
+	$query = "UPDATE player_x_season SET";
 	$query .= " yesterday=" . $yday_points;
 	$query .= ", recent=" . $recent_points;
 	$query .= ", update_status='found stats'";
@@ -406,7 +406,7 @@ function update_derived_vals_in_player_table($dbconn, $player_id, $recent_points
 
 function update_ownersXrosters($dbconn, $player_id, $season, $total_points) {
 
-	$query = "UPDATE ownersXrosters SET";
+	$query = "UPDATE owner_x_player SET";
 	$query .= " points=(" . $total_points . " - prev_points)";
 	$query .= " WHERE player_id=" . $player_id;
 	$query .= " AND season=" . $season;
@@ -454,7 +454,7 @@ function update_raw_stats_in_player_db_table($dbconn, $final_stats, $player_id, 
 
 function update_player_status($dbconn, $season, $status, $player_id) {
 
-	$query = "UPDATE playersXseasons SET";
+	$query = "UPDATE player_x_season SET";
 	$query .= " update_status='" . $status . "'";
 	$query .= ", checked=checked + 1";
 	$query .= " WHERE player_id=$player_id AND season=$season";

@@ -54,7 +54,7 @@ function update_owner_x_points($dbconn, $season, $today) {
 			exit;
 		}
 
-		$query = "UPDATE ownersXseasons SET";
+		$query = "UPDATE owner_x_season SET";
 		$query .= " points=" . $row["points"];
 		$query .= " WHERE season=$season AND owner_id=$owner_id";
 
@@ -100,7 +100,7 @@ function update_place($dbconn, $season) {
 
 		$prev_owner_points = $row["points"];
 
-		$query = "UPDATE ownersXseasons SET place=$place WHERE owner_id=$owner_id AND season=$season";
+		$query = "UPDATE owner_x_season SET place=$place WHERE owner_id=$owner_id AND season=$season";
 
 		echo "\n" . $query . "\n";
 
@@ -122,7 +122,7 @@ function update_points($dbconn, $season, $today, $timeframe) {
 		$day = $today - 1;
 	}
 
-	$query = "SELECT * FROM ownersXseasons WHERE season=$season";
+	$query = "SELECT * FROM owner_x_season WHERE season=$season";
 
 	echo "\n" . $query . "\n";
 
@@ -147,11 +147,12 @@ function update_points($dbconn, $season, $today, $timeframe) {
 			exit;
 		}
 
+
 		$r = mysqli_fetch_assoc($res);
 
 		$points = $total_points - $r["points"];
 
-		$query = "UPDATE ownersXseasons SET $timeframe=$points WHERE owner_id=$owner_id AND season=$season";
+		$query = "UPDATE owner_x_season SET $timeframe=$points WHERE owner_id=$owner_id AND season=$season";
 
 		echo "\n" . $query . "\n";
 
