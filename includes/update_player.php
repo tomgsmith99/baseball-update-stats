@@ -32,6 +32,7 @@ function update_player($dbconn, $today, $season, $row) {
 	$player_name = $row["fnf"];
 	$pos = $row["pos"];
 	$salary = $row['salary'];
+	$pts_from_prev_team = $row['pts_from_prev_team'];
 
 	echo "\n*************************************\n";
 	echo "the player id is: " . $player_id . "\n";
@@ -74,7 +75,7 @@ function update_player($dbconn, $today, $season, $row) {
 
 		$row = mysqli_fetch_array($result);
 
-		$total_points = $row['points'];
+		$total_points = $row['points'] + $pts_from_prev_team;
 
 		if ($player_id == 4687 && $season == 2022) {
 			$total_points = $total_points + 377;

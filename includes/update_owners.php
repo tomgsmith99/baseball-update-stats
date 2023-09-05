@@ -147,20 +147,25 @@ function update_points($dbconn, $season, $today, $timeframe) {
 			exit;
 		}
 
+		if (mysqli_num_rows($res) > 0) {
 
-		$r = mysqli_fetch_assoc($res);
+		    $r = mysqli_fetch_assoc($res);
 
-		$points = $total_points - $r["points"];
+			$points = $total_points - $r["points"];
 
-		$query = "UPDATE owner_x_season SET $timeframe=$points WHERE owner_id=$owner_id AND season=$season";
+			$query = "UPDATE owner_x_season SET $timeframe=$points WHERE owner_id=$owner_id AND season=$season";
 
-		echo "\n" . $query . "\n";
+			echo "\n" . $query . "\n";
 
-		mysqli_query($dbconn, $query);
+			mysqli_query($dbconn, $query);
 
-		if (mysqli_error($dbconn)) {
-			echo mysqli_error($dbconn);
-			exit;
+			if (mysqli_error($dbconn)) {
+				echo mysqli_error($dbconn);
+				exit;
+			}
+
+		} else {
+		    echo "\n" . "warning: query did not return any results.";
 		}
 	}
 }

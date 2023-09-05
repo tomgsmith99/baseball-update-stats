@@ -48,7 +48,7 @@ function get_command_line_args($dbconn, $season, $today, $argv) {
 
 	    echo "the player id is: $id\n";
 
-		$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary FROM player_x_season AS pxs, players AS p WHERE p.player_id = $id AND p.player_id = pxs.player_id AND pxs.season = $season";
+		$query = "SELECT p.player_id, p.espn_stats_id, p.fnf, pxs.pos, pxs.salary, pxs.pts_from_prev_team FROM player_x_season AS pxs, players AS p WHERE p.player_id = $id AND p.player_id = pxs.player_id AND pxs.season = $season";
 
 		echo $query . "\n";
 
