@@ -1,7 +1,10 @@
 import time
+import datetime
+
+from jinja2 import Environment, FileSystemLoader
+from zoneinfo import ZoneInfo
 
 from generate_pages import generate_home_page
-from jinja2 import Environment, FileSystemLoader
 from owner import Owner
 from player import Player
 from utils.conn_psql import PostgreSQLDatabase
@@ -194,7 +197,10 @@ def main():
 
     update_place(THIS_SEASON)
 
-    updated_at = time.strftime("%A %Y-%m-%d %H:%M:%S", time.localtime())
+    eastern = ZoneInfo("America/New_York")
+    updated_at = datetime.datetime.now(tz=eastern).strftime("%A %Y-%m-%d %H:%M:%S")
+
+    # updated_at = time.strftime("%A %Y-%m-%d %H:%M:%S", time.localtime())
 
     generate_home_page(THIS_SEASON, updated_at)
 
