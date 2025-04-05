@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Family Fantasy Baseball</h1>
+  <p>last updated: {{ updated_at }}</p>
+
+  <h2>League Standings</h2>
+
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Place</th>
+        <th>Owner</th>
+        <th>Team</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for team_context in teams %}
+        {% set place = team_context.place %}
+        {% set owner = team_context.owner %}
+        {% set team = team_context.team %}
+        {% set points = team_context.points %}
+        <tr>
+          <td>{{ place }}</td>
+          <td class="text-center"><a href = '#{{ team_context.season}}_{{team.owner_id}}'>{{ owner.nickname }}</a></td>
+          <td class="text-center"><a href = '#{{ team_context.season}}_{{team.owner_id}}'>{{ team.team_name }}</a></td>
+          <td class="text-right">{{ team.total_points }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% for team_context in teams %}
+    {% set owner = team_context.owner %}
+    {% set team = team_context.team %}
+    {% set season = team_context.season %}
+    {% set place = team_context.place %}
+    {% set active_players = team_context.active_players %}
+    {% set benched_players = team_context.benched_players %}
+    {% include "team_block.html" %}
+  {% endfor %}
+{% endblock %}
+
+</div>

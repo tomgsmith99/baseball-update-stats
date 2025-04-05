@@ -1,0 +1,10 @@
+{
+    "C": {"name": "Catcher", "count": 1},
+    "1B": {"name": "First Base", "count": 1},
+    "2B": {"name": "Second Base", "count": 1},
+    "3B": {"name": "Third Base", "count": 1},
+    "SS": {"name": "Shortstop", "count": 1},
+    "OF": {"name": "Outfield", "count": 3},
+    "SP": {"name": "Starting Pitcher", "count": 3},
+    "RP": {"name": "Relief Pitcher", "count": 1}
+}
