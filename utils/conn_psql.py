@@ -17,6 +17,7 @@ class PostgreSQLDatabase:
         self.user = os.getenv("psql_user")
         self.password = os.getenv("psql_password")
         self.port = os.getenv("psql_port")
+        self.aws_ssl_ca_cert = os.getenv("aws_ssl_ca_cert")  # Use the correct absolute path
 
         self.connection = None
         self.cursor = None
@@ -44,11 +45,12 @@ class PostgreSQLDatabase:
                 password=self.password,
                 port=self.port,
                 sslmode="verify-full",
-                sslrootcert="/Users/tomgsmith99/.ssh/global-bundle.pem"  # Use the correct absolute path
+                sslrootcert=self.aws_ssl_ca_cert
             )
             self.cursor = self.connection.cursor(cursor_factory=DictCursor)  # ✅ Use DictCursor
         except OperationalError as e:
             print(f"❌ Connection failed: {e}")
+            exit()
             self.connection = None
 
     def execute_query(self, query, values=None):
