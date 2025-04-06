@@ -20,7 +20,7 @@ s3_key = 'temp/index.html'  # This can include a folder path if needed
 # Jinja2 Configuration
 
 template_path = os.getenv('template_path')
-env = Environment(loader=FileSystemLoader('./templates'))
+env = Environment(loader=FileSystemLoader(template_path))
 template = env.get_template('home.html')
 
 ##########################################################

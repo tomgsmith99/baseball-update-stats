@@ -3,6 +3,8 @@ from flask import Flask, request, session, jsonify
 from flask_cors import CORS
 
 from utils.conn_psql import PostgreSQLDatabase
+from team import Team
+
 
 import json
 import os
@@ -30,6 +32,8 @@ def fetch_results(query, values=()):
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 app.secret_key = os.getenv('secret_key')
+
+###############################################
 
 @app.route("/")
 def hello():
@@ -59,7 +63,11 @@ def evaluate_owner():
 
     if not session.get('logged_in'):
         return jsonify({"error": "Unauthorized"}), 401
-
+    
+    team = Team(owner_id=request.form.get('owner_id'), season=SEASON)
+    
+    query = """
+        SELECT id, first_name, last_name, suffix
 
 ###############################################
 # GET calls
