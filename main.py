@@ -180,20 +180,20 @@ def update_players(season):
 
 def main():
 
-    # print("Updating stats...")
+    print("Updating stats...")
 
-    # update_players(THIS_SEASON)
+    update_players(THIS_SEASON)
 
-    # update_owner_x_player_table(THIS_SEASON)
+    update_owner_x_player_table(THIS_SEASON)
 
-    # update_owners(THIS_SEASON)
+    update_owners(THIS_SEASON)
 
-    # update_place(THIS_SEASON)
+    update_place(THIS_SEASON)
 
-    # eastern = ZoneInfo("America/New_York")
-    # updated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
+    eastern = ZoneInfo("America/New_York")
+    updated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
 
-    # generate_home_page(THIS_SEASON, updated_at)
+    generate_home_page(THIS_SEASON, updated_at)
 
     generate_page(THIS_SEASON, "trade")
     #################################################################
