@@ -8,18 +8,21 @@ import boto3
 import os
 
 ##########################################################
+
+HOME_PATH = os.getenv('home_path')
+
+##########################################################
 # AWS S3 Configuration
 
 s3 = boto3.client('s3')
 
-local_file = 'html/index.html'  # Path to your local file
+local_file = f'{HOME_PATH}/html/index.html'  # Path to your local file
 bucket_name = 'baseball.tomgsmith.com'
 s3_key = 'temp/index.html'  # This can include a folder path if needed
 
 ##########################################################
 # Jinja2 Configuration
 
-HOME_PATH = os.getenv('home_path')
 env = Environment(loader=FileSystemLoader(f'{HOME_PATH}/templates'))
 template = env.get_template('home.html')
 
