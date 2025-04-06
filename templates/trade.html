@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Make a trade</h1>
+
+<p>Please enter the password. The password is the first initial of each of Grandma and Grandpa Diff's children, oldest to youngest.</p>
+
+<p>For example, if Grandma and Grandpa Diff's children were Felipe, Matty, and Jesus, the password would be:</p>
+
+<p>FMJ</p>
+
+<div id = "user_input">
+    <form id="submit_password">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<div id="result"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function() {
+      $('#submit_password').on('submit', function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Serialize the form data
+        var formData = $(this).serialize();
+
+        $.ajax({
+          url: 'http://127.0.0.1:5001/eval_password',
+          type: 'POST',
+          data: formData,
+          success: function(response) {
+            if (response === 'authenticated') {
+              // If the password is correct, show the trade form
+              update_user_input("choose_owner");
+            } else {
+              // If the password is incorrect, show an error message
+              $('#result').html('Incorrect password. Please try again.');
+            }
+          },
+          error: function(xhr, status, error) {
+            $('#result').html('Error: ' + error);
+          }
+        });
+      });
+    });
+
+    function update_user_input(action) {
+        var formHtml = '<p>Which owner?</p>';
+        if (action === "choose_owner") {
+        $.ajax({
+            url: 'http://127.0.0.1:5001/get_owners',  // Replace with your actual endpoint URL
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+            if (response && response.length > 0) {
+                formHtml += '<form id="choose_owner_form">';
+                // Assuming each owner is returned as an array:
+                // owner[0] = id, owner[1] = first name, owner[2] = last name
+                $.each(response, function(index, owner) {
+                formHtml += '<div>';
+                formHtml += '<input type="radio" name="owner_id" value="' + owner[0] + '" id="owner_' + owner[0] + '">';
+                formHtml += '<label for="owner_' + owner[0] + '">' + owner[2] + ', ' + owner[1] + '</label>';
+                formHtml += '</div>';
+                });
+                formHtml += '<input type="submit" value="Choose Owner">';
+                formHtml += '</form>';
+            } else {
+                formHtml = '<p>No owners found for 2025.</p>';
+            }
+            $('#user_input').html(formHtml);
+
+            // Bind a submit event handler for the dynamically added form
+            $('#choose_owner_form').on('submit', function(e) {
+                e.preventDefault();
+                var selectedOwnerId = $('input[name="owner_id"]:checked').val();
+                if (!selectedOwnerId) {
+                alert("Please select an owner.");
+                return;
+                }
+                // Send the selected owner to your server
+                $.ajax({
+                url: 'http://127.0.0.1:5001/evaluate_owner',  // Replace with your actual endpoint for handling the selection
+                type: 'POST',
+                data: { owner_id: selectedOwnerId },
+                success: function(response) {
+                    $('#result').html(response);
+                },
+                error: function(xhr, status, error) {
+                    $('#result').html('Error: ' + error);
+                }
+                });
+            });
+            },
+            error: function(xhr, status, error) {
+            $('#user_input').html('<p>Error: ' + error + '</p>');
+            }
+        });
+        } else {
+        $('#user_input').html(formHtml);
+        }
+      }
+  </script>
+
+
+
+{% endblock %}

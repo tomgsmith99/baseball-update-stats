@@ -5,8 +5,10 @@ from owner import Owner
 from team import Team
 
 import boto3
+import os
 
 ##########################################################
+# AWS S3 Configuration
 
 s3 = boto3.client('s3')
 
@@ -15,8 +17,9 @@ bucket_name = 'baseball.tomgsmith.com'
 s3_key = 'temp/index.html'  # This can include a folder path if needed
 
 ##########################################################
+# Jinja2 Configuration
 
-# Set up the Jinja2 environment and load the base template
+template_path = os.getenv('template_path')
 env = Environment(loader=FileSystemLoader('./templates'))
 template = env.get_template('home.html')
 
@@ -82,6 +85,22 @@ def generate_home_page(season, updated_at):
         file.write(html_output)
     
     s3.upload_file(local_file, bucket_name, s3_key, ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/html'})
+
+def generate_page(season, section):
+
+    if section == "trade":
+
+        print(f"Generating {section} page for season {season}...")
+
+        trade_template = env.get_template('trade.html')
+
+        rendered_trade_html = trade_template.render()
+
+        with open("static/trade.html", "w", encoding="utf-8") as file:
+            file.write(rendered_trade_html)
+
+print("trade.html generated successfully.")
+
 
 def ordinal_place(n):
     """

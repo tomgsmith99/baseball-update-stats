@@ -1,20 +1,13 @@
 import time
 import datetime
 
-from jinja2 import Environment, FileSystemLoader
 from zoneinfo import ZoneInfo
 
-from generate_pages import generate_home_page
+from generate_pages import generate_home_page, generate_page
 from owner import Owner
 from player import Player
 from utils.conn_psql import PostgreSQLDatabase
 
-##########################################################
-# Set up the Jinja2 environment and load the base template
-# Create an environment with the templates directory.
-env = Environment(loader=FileSystemLoader('./templates'))
-# Load the template file.
-template = env.get_template('home.html')
 ##################################
 THIS_SEASON = 2025
 SALARY_CAP = 13000
@@ -189,7 +182,7 @@ def main():
 
     print("Updating stats...")
 
-    # update_players(THIS_SEASON)
+    update_players(THIS_SEASON)
 
     update_owner_x_player_table(THIS_SEASON)
 
@@ -202,6 +195,7 @@ def main():
 
     generate_home_page(THIS_SEASON, updated_at)
 
+    generate_page(THIS_SEASON, "trade")
     #################################################################
 
     exit()
