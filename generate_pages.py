@@ -19,8 +19,8 @@ s3_key = 'temp/index.html'  # This can include a folder path if needed
 ##########################################################
 # Jinja2 Configuration
 
-template_path = os.getenv('template_path')
-env = Environment(loader=FileSystemLoader(template_path))
+HOME_PATH = os.getenv('home_path')
+env = Environment(loader=FileSystemLoader(f'{HOME_PATH}/templates'))
 template = env.get_template('home.html')
 
 ##########################################################
@@ -96,7 +96,7 @@ def generate_page(season, section):
 
         rendered_trade_html = trade_template.render()
 
-        with open("static/trade.html", "w", encoding="utf-8") as file:
+        with open(f"{HOME_PATH}/static/trade.html", "w", encoding="utf-8") as file:
             file.write(rendered_trade_html)
 
 print("trade.html generated successfully.")
