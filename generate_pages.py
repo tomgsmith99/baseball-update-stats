@@ -84,6 +84,8 @@ def generate_home_page(season, updated_at):
 
     html_output = template.render(context)
 
+    os.makedirs(os.path.dirname(local_file), exist_ok=True)
+
     with open(local_file, "w", encoding="utf-8") as file:
         file.write(html_output)
     
@@ -99,7 +101,11 @@ def generate_page(season, section):
 
         rendered_trade_html = trade_template.render()
 
-        with open(f"{HOME_PATH}/static/trade.html", "w", encoding="utf-8") as file:
+        trade_html = f"{HOME_PATH}/static/trade.html"
+
+        os.makedirs(os.path.dirname(trade_html), exist_ok=True)
+
+        with open(trade_html, "w", encoding="utf-8") as file:
             file.write(rendered_trade_html)
 
 print("trade.html generated successfully.")
