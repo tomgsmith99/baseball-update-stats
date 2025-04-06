@@ -1,6 +1,7 @@
 venv/
 .env
 html/*.html
+html/*.css
 __pycache__/
 
 *.csv
