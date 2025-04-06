@@ -32,14 +32,17 @@
       $('#submit_password').on('submit', function(e) {
         e.preventDefault();  // Prevent the default form submission
 
-        // Serialize the form data
         var formData = $(this).serialize();
 
         $.ajax({
           url: 'http://127.0.0.1:5001/eval_password',
           type: 'POST',
+          xhrFields: {
+            withCredentials: true  // Ensure cookies are sent
+         },
           data: formData,
           success: function(response) {
+            console.log(response)
             if (response === 'authenticated') {
               // If the password is correct, show the trade form
               update_user_input("choose_owner");
@@ -61,6 +64,9 @@
         $.ajax({
             url: 'http://127.0.0.1:5001/get_owners',  // Replace with your actual endpoint URL
             type: 'GET',
+            xhrFields: {
+            withCredentials: true  // Ensure cookies are sent
+            },
             dataType: 'json',
             success: function(response) {
             if (response && response.length > 0) {
@@ -68,13 +74,17 @@
                 // Assuming each owner is returned as an array:
                 // owner[0] = id, owner[1] = first name, owner[2] = last name
                 $.each(response, function(index, owner) {
-                formHtml += '<div>';
-                formHtml += '<input type="radio" name="owner_id" value="' + owner[0] + '" id="owner_' + owner[0] + '">';
-                formHtml += '<label for="owner_' + owner[0] + '">' + owner[2] + ', ' + owner[1] + '</label>';
-                formHtml += '</div>';
-                });
-                formHtml += '<input type="submit" value="Choose Owner">';
-                formHtml += '</form>';
+                  owner_name = owner[2] + ', ' + owner[1];
+                  if (owner[3] != null) {
+                    owner_name += ' ' + owner[3];
+                  }
+                  formHtml += '<div>';
+                  formHtml += '<input type="radio" name="owner_id" value="' + owner[0] + '" id="owner_' + owner[0] + '">';
+                  formHtml += '<label for="owner_' + owner[0] + '">' + owner_name + '</label>';
+                  formHtml += '</div>';
+                  });
+                  formHtml += '<input type="submit" value="Choose Owner">';
+                  formHtml += '</form>';
             } else {
                 formHtml = '<p>No owners found for 2025.</p>';
             }
@@ -90,7 +100,7 @@
                 }
                 // Send the selected owner to your server
                 $.ajax({
-                url: 'http://127.0.0.1:5001/choose_owner',  // Replace with your actual endpoint for handling the selection
+                url: 'http://127.0.0.1:5001/evaluate_owner',  // Replace with your actual endpoint for handling the selection
                 type: 'POST',
                 data: { owner_id: selectedOwnerId },
                 success: function(response) {

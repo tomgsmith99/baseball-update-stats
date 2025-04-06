@@ -2,3 +2,6 @@ cron log management
 css management
 move classes into classes dir
 refactor Team class
+generate specific pages (trades, for example)
+test     if not session.get('logged_in'):
+

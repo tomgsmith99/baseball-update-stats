@@ -17,6 +17,7 @@ GOOGLE_CSE_ID = os.getenv("google_cse_id")
 
 MLB_URL = "https://statsapi.mlb.com/api/v1/people/{mlb_id}/stats?stats=season&season={season}"
 
+HOME_PATH = os.getenv("home_path")
 ###############################################
 
 def fetch_results(query, values=()):
@@ -248,7 +249,7 @@ class Player:
 
     def _calculate_value(self, season, current_day_of_year, points):
 
-        with open('seasons.json', 'r', encoding='utf-8') as file:
+        with open(f'{HOME_PATH}/seasons.json', 'r', encoding='utf-8') as file:
 
             seasons = json.load(file)
 
