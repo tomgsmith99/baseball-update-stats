@@ -22,10 +22,8 @@ BASE_URL = os.getenv('base_url')
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
-    "http://127.0.0.1:5001",
-    "https://baseball-trade-50cd0f399132.herokuapp.com",
-    "https://baseball-trade.herokuapp.com",
-    ]}})
+    BASE_URL
+]}})
 app.secret_key = os.getenv('secret_key')
 
 ###############################################
