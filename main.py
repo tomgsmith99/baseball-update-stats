@@ -1,9 +1,9 @@
 import time
 
-from generate_pages import generate_home_page, generate_page
+from generate_pages import generate_page
 from owner import Owner
 from player import Player
-from utils.conn_psql import PostgreSQLDatabase, fetch_results
+from utils.conn_psql import execute_query, fetch_results
 
 ##################################
 THIS_SEASON = 2025
@@ -13,46 +13,53 @@ PAUSE_LENGTH = 0.2
 ##################################
 
 def update_owner_x_player_table(season):
-    # Query to retrieve distinct player IDs along with last and first names, ordered as desired.
-    query = """
-        SELECT sub.player_id, sub.last_name, sub.first_name
-        FROM (
-            SELECT DISTINCT oxp.player_id, p.last_name, p.first_name
-            FROM owner_x_player AS oxp
-            LEFT JOIN player AS p ON oxp.player_id = p.id
-            WHERE oxp.season = %s
-        ) AS sub
-        ORDER BY sub.last_name, sub.first_name;
-    """
-    values = (season,)
-    results = fetch_results(query, values)
 
-    if not results:
-        print(f"No distinct player IDs found for season {season}.")
-        return
+    query = """
+        SELECT DISTINCT oxp.player_id, p.last_name, p.first_name, pxs.points
+        FROM owner_x_player AS oxp
+        LEFT JOIN player AS p ON oxp.player_id = p.id
+        LEFT JOIN player_x_season AS pxs ON oxp.player_id = pxs.id AND oxp.season = pxs.season
+        WHERE oxp.season = %s
+        ORDER BY p.last_name, p.first_name;
+    """
+
+    values = (season,)
+
+    results = fetch_results(query, values, True)
+
+    i = 0
 
     player_count = len(results)
-    print(f"{player_count} distinct player IDs in the {season} season:")
 
-    # Open a single connection for all updates
-    with PostgreSQLDatabase() as db:
-        for i, row in enumerate(results, start=1):
-            player_id = row[0]
-            player = Player(player_id)
-            print(f"Updating player {i} of {player_count}: {player.display_name}")
+    for player in results:
 
-            # Calculate the points for the season
-            points = player.get_points(season)
+        i += 1
 
-            # Update the points for this player in the owner_x_player table
-            update_query = """
-                UPDATE owner_x_player 
-                SET points = %s 
-                WHERE season = %s AND player_id = %s 
-                  AND start_date = 0 AND bench_date = 0;
-            """
-            update_values = (points, season, player_id)
-            db.execute_query(update_query, update_values)
+        print(f"Updating player {i} of {player_count}...")
+
+        player_id = player['player_id']
+
+        points = player['points']
+
+        print(f"Updating owner_x_player table for player {player['last_name']}, {player['first_name']}...")
+
+        query = """
+            UPDATE owner_x_player
+            SET points = %s
+            WHERE player_id = %s AND season = %s AND start_date = 0 AND bench_date = 0;
+        """
+        values = (points, player_id, season)
+
+        execute_query(query, values)
+
+        query = """
+            UPDATE owner_x_player
+            SET points = %s - prev_points
+            WHERE player_id = %s AND season = %s AND start_date > 0 AND bench_date = 0;
+        """
+        values = (points, player_id, season)
+
+        execute_query(query, values)
 
 def update_owners(season):
 
@@ -175,8 +182,10 @@ def main():
 
     update_place(THIS_SEASON)
 
+    print("Generating home page...")
     generate_page(THIS_SEASON, "home")
 
+    print("Generating trades page...")
     generate_page(THIS_SEASON, "trade")
 
     #################################################################

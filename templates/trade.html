@@ -6,11 +6,118 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <!-- Include Select2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+  
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+  
+    #start_over {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  
+    button, input[type="submit"] {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+  
+    button:hover, input[type="submit"]:hover {
+      background-color: #2980b9;
+    }
+  
+    #user_input {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+  
+    label {
+      font-weight: bold;
+    }
+  
+    input[type="password"], input[type="text"], select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  
+    p {
+      line-height: 1.5;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+    }
+  
+    table th, table td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+  
+    table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  
+    .players-form .player-entry {
+      background-color: #f9f9f9;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  
+    .player-entry input[type="radio"] {
+      transform: scale(1.2);
+    }
+  
+    #result {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 
 <h1>Make a trade</h1>
+
+<div id = 'start_over'>
+  <p><button onclick="window.location.href = window.location.href">Start Over</button></p>
+</div>
 
 <div id = "user_input">
 
@@ -67,7 +174,7 @@
         type: 'POST',
         xhrFields: { withCredentials: true },
         success: function(response) {
-          $('#user_input').html('<p>Trade confirmed!</p>');
+          $('#user_input').html('<p>Trade confirmed!</p><p>You will see your trade reflected in the stats tomorrow.</p>');
         },
         error: function(xhr, status, error) {
           $('#user_input').html('Error: ' + error);
@@ -258,22 +365,22 @@
               return;
             }
             $.ajax({
-            url: base_url + '/evaluate_owner',
-            type: 'POST',
-            data: { owner_id: selectedOwnerId },
-            success: function(response) {
+              url: base_url + '/evaluate_owner',
+              type: 'POST',
+              data: { owner_id: selectedOwnerId },
+              success: function(response) {
 
-              if (response['error']) {
-                $('#user_input').html('<p>Error: ' + response['error'] + '</p>');
-                return;
+                if (response['error']) {
+                  $('#user_input').html('<p>Error: ' + response['error'] + '</p>');
+                  return;
+                }
+                // Assuming the response contains the team data
+                show_team(response);
+              },
+              error: function(xhr, status, error) {
+                $('#result').html('Error: ' + error);
               }
-              // Assuming the response contains the team data
-              show_team(response);
-            },
-            error: function(xhr, status, error) {
-              $('#result').html('Error: ' + error);
-            }
-          });
+            });
           });
         },
         error: function(xhr, status, error) {

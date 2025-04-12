@@ -8,10 +8,18 @@ THIS_SEASON = 2025
 ##########################
 def main():
 
+    valid_sections = ['home', 'trades']
+
     parser = argparse.ArgumentParser(description="generate static page(s)")
 
-    parser.add_argument("--section", type=str, required=True, help="The section of the site to generate")
-
+    parser.add_argument(
+        "--section",
+        type=str,
+        choices=valid_sections,
+        required=True,
+        help=f"The section of the site to generate. Valid options: {', '.join(valid_sections)}"
+    )
+    
     args = parser.parse_args()
 
     print(f"Generating page {args.section}")

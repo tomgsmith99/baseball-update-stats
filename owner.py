@@ -35,17 +35,17 @@ class Owner:
 
     def get_current_points(self, season):
 
+        points = 0
+
         query = """
             SELECT SUM(points) FROM owner_x_player WHERE owner_id = %s AND season = %s
         """
         results = fetch_results(query, (self.id, season))
-        if results and results[0][0] is not None:
+
+        if results:
             points = results[0][0]
-            print(f"Total points for owner {self.id} in season {season}: {points}")
-            return points
-        else:
-            print(f"No points data found for owner {self.id} in season {season}.")
-            return 0
+
+        return points
 
     def get_default_team_name(self):
         """Retrieve the default team name from the owner's most recent season."""
