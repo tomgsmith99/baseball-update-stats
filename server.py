@@ -145,7 +145,7 @@ def evaluate_added_player():
     session['added_player_display_name'] = player.display_name
     session['added_player_salary'] = season_details['salary']
 
-    return jsonify(session)
+    return jsonify(dict(session))
 
 # Evaluate dropped player
 @app.route("/evaluate_dropped_player", methods=["POST"])
