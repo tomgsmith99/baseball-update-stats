@@ -1,7 +1,6 @@
 # generate_home_page.py
 from jinja2 import Environment, FileSystemLoader
 from utils.conn_psql import fetch_results
-from owner import Owner
 from team import Team
 
 import boto3
@@ -95,7 +94,7 @@ def generate_page(season, section):
             'season': season
         })
 
-        trade_html = f"{HOME_PATH}/static/trade.html"
+        trade_html = f"{HOME_PATH}/static/index.html"
 
         os.makedirs(os.path.dirname(trade_html), exist_ok=True)
 
