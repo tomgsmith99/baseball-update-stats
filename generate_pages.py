@@ -83,7 +83,8 @@ def generate_page(season, section):
 
     if section == "trade":
 
-        base_url = os.getenv('base_url')
+        # base_url = os.getenv('base_url')
+        base_url = os.getenv('heroku_url')
 
         print(f"Generating {section} page for season {season}...")
 
