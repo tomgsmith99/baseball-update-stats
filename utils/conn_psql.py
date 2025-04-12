@@ -1,7 +1,7 @@
 import psycopg2
 import os
 from psycopg2 import OperationalError
-from psycopg2.extras import DictCursor  # ✅ Import DictCursor for dictionary results
+from psycopg2.extras import DictCursor
 from dotenv import load_dotenv
 
 # Load environment variables
