@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 from generate_pages import generate_home_page, generate_page
 from owner import Owner
 from player import Player
-from utils.conn_psql import PostgreSQLDatabase
+from utils.conn_psql import PostgreSQLDatabase, fetch_results
 
 ##################################
 THIS_SEASON = 2025
@@ -14,18 +14,6 @@ SALARY_CAP = 13000
 
 PAUSE_LENGTH = 0.2
 ##################################
-
-# ✅ DATABASE FUNCTIONS
-
-def fetch_results(query, values=()):
-    """Fetch results from the database."""
-    with PostgreSQLDatabase() as psql_db:
-        try:
-            psql_db.cursor.execute(query, values)
-            return psql_db.cursor.fetchall()
-        except Exception as e:
-            print(f"❌ Database Query Error: {e}")
-            return None
 
 def update_owner_x_player_table(season):
     # Query to retrieve distinct player IDs along with last and first names, ordered as desired.
@@ -196,6 +184,7 @@ def main():
     generate_home_page(THIS_SEASON, updated_at)
 
     generate_page(THIS_SEASON, "trade")
+
     #################################################################
 
     exit()

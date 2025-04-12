@@ -4,10 +4,10 @@
     <table class="table table-striped table-bordered table-sm">
       <thead>
         <tr>
-          <th colspan="8">{{ owner.nickname }} - {{ team.team_name }}</th>
+          <th colspan="8">{{ team.nickname }} - {{ team.team_name }}</th>
         </tr>
         <tr>
-          <th colspan="8">{{ season }}: {{ place }} place</th>
+          <th colspan="8">{{ team.season }}: {{ place }} place</th>
         </tr>
         <tr>
           <th>POS</th>
@@ -40,16 +40,16 @@
         <tr>
           <td colspan="8" class="text-center">Benched players</td>
         </tr>
-        {% for bench in benched_players %}
+        {% for player_id, player in benched_players.items() %}
         <tr>
-          <td>{{ bench.pos }}</td>
-          <td><a href="/players/{{ bench.player_id }}">{{ bench.player_display_name }}</a></td>
-          <td class="text-center">{{ bench.team }}</td>
-          <td class="player_row_cell_rt text-right">${{ bench.salary }}</td>
-          <td class="player_row_cell_rt text-right">{{ bench.points }}</td>
-          <td class="player_row_cell_rt text-right">{{ bench.yday }}</td>
-          <td class="player_row_cell_rt text-right">{{ bench.rec }}</td>
-          <td class="player_row_cell_rt text-right">{{ bench.val }}</td>
+          <td>{{ player.pos }}</td>
+          <td><a href="/players/{{ player_id }}">{{ player.player_display_name }}</a></td>
+          <td class="text-center">{{ player.team }}</td>
+          <td class="player_row_cell_rt text-right">${{ player.salary }}</td>
+          <td class="player_row_cell_rt text-right">{{ player.points }}</td>
+          <td class="player_row_cell_rt text-right">{{ player.yday }}</td>
+          <td class="player_row_cell_rt text-right">{{ player.rec }}</td>
+          <td class="player_row_cell_rt text-right">{{ player.val }}</td>
         </tr>
         {% endfor %}
         {% endif %}

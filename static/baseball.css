@@ -79,3 +79,63 @@
     .player_row_cell_rt {
       text-align: right;
     }
+
+    .select2-results__options {
+      max-height: 200px;
+      overflow-y: auto;
+  }
+
+  /* Container for the form */
+.players-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Each player entry within the form */
+.player-entry {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* Radio button within each player entry */
+.player-entry input[type="radio"] {
+  margin-right: 10px;
+}
+
+/* The player position element */
+.player-pos {
+  font-weight: bold;
+  width: 50px;
+}
+
+/* The label for the player's display name */
+.player-entry label {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+/* The team name element */
+.player-team {
+  width: 80px;
+  margin-right: 10px;
+}
+
+/* The points element */
+.player-points {
+  width: 80px;
+  margin-right: 10px;
+}
+
+/* The salary element */
+.player-salary {
+  width: 80px;
+}
+
+/* General form styling (optional) */
+form {
+  font-family: Arial, sans-serif;
+  margin: 20px auto;
+}

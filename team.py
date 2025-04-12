@@ -1,16 +1,4 @@
-from utils.conn_psql import PostgreSQLDatabase
-
-###############################################
-
-def fetch_results(query, values=()):
-    """Fetch results from the database."""
-    with PostgreSQLDatabase() as psql_db:
-        try:
-            psql_db.cursor.execute(query, values)
-            return psql_db.cursor.fetchall()
-        except Exception as e:
-            print(f"❌ Database Query Error: {e}")
-            return None
+from utils.conn_psql import PostgreSQLDatabase, fetch_results
 
 ################################################
 
@@ -18,43 +6,32 @@ class Team:
     def __init__(self, owner_id, season):
         self.owner_id = owner_id
         self.season = season
-        self.team_name = self.get_team_name_from_db()
         self.roster = self.get_roster()
         self.active_players = self.get_active_players()
 
-        self.total_points = self.get_total_points()
+        self._init()
 
-        self.set_money()
-
-    def set_money(self):
-        # Fetch the initial bank and salary amounts for this owner and season from the database
+    def _init(self):
         query = """
-            SELECT bank_init, bank_current, salary_init, salary_current 
-            FROM owner_x_season 
+            SELECT team_name, points, recent, yesterday, salary_init, salary_current, bank_init, bank_current, place, first_name, last_name, suffix, nickname FROM owner_x_season_detail
             WHERE id = %s AND season = %s
         """
         results = fetch_results(query, (self.owner_id, self.season))
-        if results and results[0]:
+        if results and results[0]:  # Check if results are not empty
             row = results[0]
-            self.bank_init = row[0]
-            self.bank_current = row[1]
-            self.salary_init = row[2]
-            self.salary_current = row[3]
-        else:
-            # Set to None or some default values if the query doesn't return data
-            self.bank_init = None
-            self.bank_current = None
-            self.salary_init = None
-            self.salary_current = None
-
-    def get_team_name_from_db(self):
-        # Fetch the team name for this owner and season from the database
-        query = "SELECT team_name FROM owner_x_season WHERE id = %s AND season = %s"
-        results = fetch_results(query, (self.owner_id, self.season))
-        if results and results[0][0]:
-            return results[0][0]
-        else:
-            return None
+            self.team_name = row[0]
+            self.total_points = row[1]
+            self.recent = row[2]
+            self.yesterday = row[3]
+            self.salary_init = row[4]
+            self.salary_current = row[5]
+            self.bank_init = row[6]
+            self.bank_current = row[7]
+            self.place = row[8]
+            self.first_name = row[9]
+            self.last_name = row[10]
+            self.suffix = row[11]
+            self.nickname = row[12]
     
     def get_roster(self):
         # Fetch the team roster from the database
@@ -134,15 +111,23 @@ class Team:
             AND bench_date > 0
         """
         results = fetch_results(query, (self.owner_id, self.season))
+
+        if results:
+            print (self.nickname)
+
+            print("Benched Players")
+            print(results)
+
         benched_players = {
             row[0]: {
                 'pos': row[1],
                 'team': row[2],
                 'salary': row[3],
                 'points': row[4],
-                'player_display_name': row[8]
+                'player_display_name': row[5]
             } for row in results
         } if results else {}
+
         return benched_players
 
     def get_total_points(self):
@@ -155,3 +140,28 @@ class Team:
         else:
             print(f"No points data found for owner {self.owner_id} in season {self.season}.")
             return 0
+
+    def to_dict(self):
+        """
+        Return a dictionary representation of the team with all relevant fields.
+        """
+        return {
+            "owner_id": self.owner_id,
+            "season": self.season,
+            "team_name": self.team_name,
+            "total_points": self.total_points,
+            "recent": self.recent,
+            "yesterday": self.yesterday,
+            "salary_init": self.salary_init,
+            "salary_current": self.salary_current,
+            "bank_init": self.bank_init,
+            "bank_current": self.bank_current,
+            "place": self.place,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "suffix": self.suffix,
+            "nickname": self.nickname,
+            "roster": self.roster,
+            "active_players": self.active_players,
+            "benched_players": self.get_benched_players()  # You may cache this if needed
+        }

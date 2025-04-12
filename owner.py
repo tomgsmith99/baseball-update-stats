@@ -1,22 +1,11 @@
-from utils.conn_psql import PostgreSQLDatabase
+from utils.conn_psql import PostgreSQLDatabase, execute_query, fetch_results
 
 import datetime
-
-###############################################
-
-def fetch_results(query, values=()):
-    """Fetch results from the database."""
-    with PostgreSQLDatabase() as psql_db:
-        try:
-            psql_db.cursor.execute(query, values)
-            return psql_db.cursor.fetchall()
-        except Exception as e:
-            print(f"❌ Database Query Error: {e}")
-            return None
 
 ################################################
 
 class Owner:
+
     def __init__(self, id):
         self.id = id
         self.nickname = self.get_nickname()
@@ -115,25 +104,15 @@ class Owner:
         """Set the team name for the owner."""
         query = "UPDATE owner_x_season SET team_name = %s WHERE id = %s AND season = %s"
         values = (team_name, self.id, season)
-        with PostgreSQLDatabase() as psql_db:
-            try:
-                psql_db.cursor.execute(query, values)
-                psql_db.connection.commit()
-                print(f"Team name updated to {team_name} for owner {self.id}.")
-            except Exception as e:
-                print(f"❌ Error updating team name: {e}")
+
+        execute_query(query, values)
 
     def update_place(self, place, season):
         """Update the owner's place in the league for the given season."""
         query = "UPDATE owner_x_season SET place = %s WHERE id = %s AND season = %s"
         values = (place, self.id, season)
-        with PostgreSQLDatabase() as psql_db:
-            try:
-                psql_db.cursor.execute(query, values)
-                psql_db.connection.commit()
-                print(f"Place updated to {place} for owner {self.id} in season {season}.")
-            except Exception as e:
-                print(f"❌ Error updating place: {e}")
+
+        execute_query(query, values)
 
     def update_stats(self, season):
 
@@ -155,14 +134,11 @@ class Owner:
         """
         values = (points, self.id, current_day_of_year, season, current_timestamp)
 
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
-            print(f"Points updated for owner {self.id} in season {season}.")
+        execute_query(query, values)
 
         query = """
             UPDATE owner_x_season set points = %s WHERE season = %s AND id = %s;
         """
         values = (points, season, self.id)
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
-            print(f"Points updated for owner {self.id} in season {season} in owner_x_season table.")
+
+        execute_query(query, values)

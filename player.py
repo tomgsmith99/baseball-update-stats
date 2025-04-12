@@ -6,7 +6,7 @@ import requests
 import time
 
 from dotenv import load_dotenv
-from utils.conn_psql import PostgreSQLDatabase
+from utils.conn_psql import PostgreSQLDatabase, execute_query, fetch_results
 
 ###############################################
 
@@ -18,17 +18,29 @@ GOOGLE_CSE_ID = os.getenv("google_cse_id")
 MLB_URL = "https://statsapi.mlb.com/api/v1/people/{mlb_id}/stats?stats=season&season={season}"
 
 HOME_PATH = os.getenv("home_path")
+
 ###############################################
 
-def fetch_results(query, values=()):
-    """Fetch results from the database."""
-    with PostgreSQLDatabase() as psql_db:
-        try:
-            psql_db.cursor.execute(query, values)
-            return psql_db.cursor.fetchall()
-        except Exception as e:
-            print(f"❌ Database Query Error: {e}")
-            return None
+# def fetch_results(query, values=(), as_dict=False):
+#     """Fetch results from the database.
+    
+#     If as_dict is True, returns a list of dictionaries with column names as keys.
+#     Otherwise, returns a list of tuples.
+#     """
+#     with PostgreSQLDatabase() as psql_db:
+#         try:
+#             psql_db.cursor.execute(query, values)
+#             results = psql_db.cursor.fetchall()
+#             if as_dict and results:
+#                 # Extract column names from the cursor description
+#                 colnames = [desc[0] for desc in psql_db.cursor.description]
+#                 # Convert each row into a dictionary mapping column names to values
+#                 return [dict(zip(colnames, row)) for row in results]
+#             else:
+#                 return results
+#         except Exception as e:
+#             print(f"❌ Database Query Error: {e}")
+#             return None
 
 ################################################
 
@@ -71,7 +83,18 @@ class Player:
         else:
             print(f"❌ Max season not found for player ID {self.id}.")
             return None
-    
+
+    def get_season_details(self, season):
+        query = """
+            SELECT points, salary, val, recent, yesterday, team, pos FROM player_x_season WHERE id = %s AND season = %s;
+        """
+        results = fetch_results(query, (self.id, season), True)
+        if results and results[0]:
+            return results[0]
+        else:
+            print(f"❌ Season details not found for player ID {self.id} in season {season}.")
+            return None
+        
     def get_type(self, season):
         query = """
             SELECT pos FROM player_x_season WHERE id = %s AND season = %s;
@@ -170,6 +193,7 @@ class Player:
             return 0
 
     def _get_salary(self, season):
+
         query = """
             SELECT salary FROM player_x_season WHERE id = %s AND season = %s;
         """
@@ -179,14 +203,15 @@ class Player:
         else:
             print(f"❌ Salary not found for player ID {self.id} in season {season}.")
             return 0
+
     def _set_mlb_id(self, mlb_id):
+
         query = """
             UPDATE player SET mlb_id = %s WHERE id = %s;
         """
         values = (mlb_id, self.id)
 
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
+        execute_query(query, values)
 
     def _calculate_points(self, stats, season):
 
@@ -222,9 +247,8 @@ class Player:
             """
             values = (points, runs, rbi, hits, walks, sb, doubles, triples, hr, current_timestamp, self.id, season)
 
-            with PostgreSQLDatabase() as db:
-                db.execute_query(query, values)
-        
+            execute_query(query, values)
+
         elif self.p_type == "P":
 
             wins = stats['wins']
@@ -238,8 +262,9 @@ class Player:
                 UPDATE player_x_season SET points = %s, wins = %s, ip = %s, k = %s, saves = %s, last_updated = %s WHERE id = %s AND season = %s;
             """
             values = (points, wins, ip, k, saves, current_timestamp, self.id, season)
-            with PostgreSQLDatabase() as db:
-                db.execute_query(query, values)
+
+            execute_query(query, values)
+
         else:
             print(f"❌ Player type {self.p_type} not recognized.")
     
@@ -299,9 +324,9 @@ class Player:
             WHERE id = %s AND season = %s;
         """
         values = (points, self.id, season)
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
 
+        execute_query(query, values)
+        
     def _update_player_x_points_x_day_x_season_table(self, points, season, current_day_of_year):
 
         current_timestamp = datetime.datetime.now()
@@ -316,9 +341,7 @@ class Player:
         """
         values = (points, self.id, current_day_of_year, season, current_timestamp)
 
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
-            print(f"Points updated for owner {self.id} in season {season}.")
+        execute_query(query, values)
 
     def get_points(self, season):
         query = """
@@ -364,5 +387,5 @@ class Player:
             WHERE id = %s AND season = %s;
         """
         values = (val, recent_points, yesterday_points, self.id, season)
-        with PostgreSQLDatabase() as db:
-            db.execute_query(query, values)
+
+        execute_query(query, values)

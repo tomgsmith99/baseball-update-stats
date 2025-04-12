@@ -24,18 +24,6 @@ class PostgreSQLDatabase:
 
     def connect(self):
         """Establish connection to PostgreSQL database"""
-        # try:
-        #     self.connection = psycopg2.connect(
-        #         host=self.host,
-        #         database=self.database,
-        #         user=self.user,
-        #         password=self.password,
-        #         port=self.port
-        #     )
-        #     self.cursor = self.connection.cursor(cursor_factory=DictCursor)  # ✅ Use DictCursor
-        # except OperationalError as e:
-        #     print(f"❌ Connection failed: {e}")
-        #     self.connection = None
 
         try:
             self.connection = psycopg2.connect(
@@ -98,5 +86,42 @@ class PostgreSQLDatabase:
         """Ensure connection closes after 'with' block"""
         self.close()
 
-# ✅ Explicitly define exports
-__all__ = ["PostgreSQLDatabase"]
+def execute_query(query, values=()):
+    """
+    Execute a query that modifies the database (INSERT, UPDATE, DELETE, etc.).
+    
+    Args:
+        query (str): The SQL query to execute.
+        values (tuple): A tuple of values to pass to the query.
+    
+    Returns:
+        bool: True if the query executed successfully, False otherwise.
+    """
+    with PostgreSQLDatabase() as psql_db:
+        try:
+            psql_db.cursor.execute(query, values)
+            psql_db.connection.commit()
+            return True
+        except Exception as e:
+            print(f"❌ Database Query Execution Error: {e}")
+            return False
+
+def fetch_results(query, values=(), as_dict=False):
+    """Fetch results from the database.
+    
+    If as_dict is True, returns a list of dictionaries.
+    Otherwise, returns a list of tuples.
+    """
+    with PostgreSQLDatabase() as psql_db:
+        try:
+            psql_db.cursor.execute(query, values)
+            results = psql_db.cursor.fetchall()
+            if as_dict and results:
+                colnames = [desc[0] for desc in psql_db.cursor.description]
+                return [dict(zip(colnames, row)) for row in results]
+            return results
+        except Exception as e:
+            print(f"❌ Database Query Error: {e}")
+            return None
+
+__all__ = ["PostgreSQLDatabase", "execute_query", "fetch_results"]

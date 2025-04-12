@@ -1,6 +1,6 @@
 # generate_home_page.py
 from jinja2 import Environment, FileSystemLoader
-from utils.conn_psql import PostgreSQLDatabase
+from utils.conn_psql import fetch_results
 from owner import Owner
 from team import Team
 
@@ -28,16 +28,6 @@ template = env.get_template('home.html')
 
 ##########################################################
 
-def fetch_results(query, values=()):
-    """Fetch results from the database."""
-    with PostgreSQLDatabase() as psql_db:
-        try:
-            psql_db.cursor.execute(query, values)
-            return psql_db.cursor.fetchall()
-        except Exception as e:
-            print(f"❌ Database Query Error: {e}")
-            return None
-
 def generate_home_page(season, updated_at):
     """
     Generate the home page HTML for the given season and updated_at timestamp.
@@ -54,28 +44,27 @@ def generate_home_page(season, updated_at):
         exit()
 
     total_owners = len(results)
+
     print(f"{total_owners} owners with teams in season {season}:")
     print("\n*******************************************************")
 
     teams_context = []
 
     for count, row in enumerate(results, start=1):
-        owner = Owner(row[0])
-        place = owner.get_place(season)
-        team = Team(owner.id, season)
+        owner_id = row[0]
+        team = Team(owner_id, season)
+        place = team.place
         active_players = team.get_active_players()
         benched_players = team.get_benched_players()
 
         teams_context.append({
-            'owner': owner,
             'team': team,
-            'season': season,
             'place': ordinal_place(place),
             'active_players': active_players,
             'benched_players': benched_players
         })
 
-        print(f"Processed {count}/{total_owners}: {owner.nickname} - {team.team_name}")
+        print(f"Processed {count}/{total_owners}: {team.nickname} - {team.team_name}")
 
     context = {
         'teams': teams_context,
@@ -88,18 +77,23 @@ def generate_home_page(season, updated_at):
 
     with open(local_file, "w", encoding="utf-8") as file:
         file.write(html_output)
-    
+
     s3.upload_file(local_file, bucket_name, s3_key, ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/html'})
 
 def generate_page(season, section):
 
     if section == "trade":
 
+        base_url = os.getenv('base_url')
+
         print(f"Generating {section} page for season {season}...")
 
         trade_template = env.get_template('trade.html')
 
-        rendered_trade_html = trade_template.render()
+        rendered_trade_html = trade_template.render({
+            'base_url': base_url,
+            'season': season
+        })
 
         trade_html = f"{HOME_PATH}/static/trade.html"
 
@@ -109,7 +103,6 @@ def generate_page(season, section):
             file.write(rendered_trade_html)
 
 print("trade.html generated successfully.")
-
 
 def ordinal_place(n):
     """

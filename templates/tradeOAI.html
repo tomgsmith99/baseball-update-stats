@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<h1>Make a trade</h1>
+
+<div id="user_input">
+  <!-- initial password form -->
+  <p>Please enter the password. The password is the first initial of each of Grandma and Grandpa Diff's children, oldest to youngest.</p>
+  <p>For example, if Grandma and Grandpa Diff's children were Felipe, Matty, and Jesus, the password would be:</p>
+  <p>FMJ</p>
+  <form id="submit_password">
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required>
+    <input type="submit" value="Submit">
+  </form>
+</div>
+<div id="result"></div>
+
+<script>
+  // global base URL, injected from server if needed
+  const base_url = '{{base_url}}'; 
+
+  $(document).ready(function() {
+    // Bind password form submission
+    $('#submit_password').on('submit', function(e) {
+      e.preventDefault();
+      const formData = $(this).serialize();
+      $.ajax({
+        url: 'http://127.0.0.1:5001/eval_password',
+        type: 'POST',
+        xhrFields: { withCredentials: true },
+        data: formData,
+        success: function(response) {
+          console.log("Password check:", response);
+          if (response === 'authenticated') {
+            // Load owner selection form on authentication success
+            loadOwnerForm();
+          } else {
+            $('#result').html('Incorrect password. Please try again.');
+          }
+        },
+        error: function(xhr, status, error) {
+          $('#result').html('Error: ' + error);
+        }
+      });
+    });
+  });
+
+  // A helper to generate a radio selection form.
+  function generateRadioForm(options) {
+    // options: {
+    //   title: string,
+    //   items: array of objects,
+    //   inputName: string,
+    //   displayCallback: function(item) -> string,
+    //   formId: string,
+    //   submitLabel: string
+    // }
+    let html = `<p class="form-title">${options.title}</p>`;
+    html += `<form id="${options.formId}">`;
+    html += '<div class="form-container">';
+    options.items.forEach(function(item) {
+      html += '<div class="form-entry">';
+      html += `<input type="radio" name="${options.inputName}" value="${item.id}" id="${options.inputName}_${item.id}">`;
+      html += `<label for="${options.inputName}_${item.id}">${options.displayCallback(item)}</label>`;
+      html += '</div>';
+    });
+    html += '</div>';
+    html += `<input type="submit" value="${options.submitLabel}">`;
+    html += '</form>';
+    return html;
+  }
+
+  // A helper to bind form submission for a generated form.
+  function bindFormSubmit(formId, endpoint, inputName, successCallback) {
+    $(`#${formId}`).on('submit', function(e) {
+      e.preventDefault();
+      const selectedValue = $(`input[name="${inputName}"]:checked`).val();
+      if (!selectedValue) {
+        alert("Please make a selection.");
+        return;
+      }
+      $.ajax({
+        url: base_url + endpoint,
+        type: 'POST',
+        data: { [inputName]: selectedValue },
+        xhrFields: { withCredentials: true },
+        success: successCallback,
+        error: function(xhr, status, error) {
+          $('#result').html('Error: ' + error);
+        }
+      });
+    });
+  }
+
+  // Load owners form via AJAX and generate form using helper function
+  function loadOwnerForm() {
+    $.ajax({
+      url: base_url + '/get_owners',
+      type: 'GET',
+      dataType: 'json',
+      xhrFields: { withCredentials: true },
+      success: function(response) {
+        let owners = [];
+        if (response && response.length > 0) {
+          // Map response to an array of owner objects.
+          // Assuming response format: [ [id, first_name, last_name, suffix], ... ]
+          owners = response.map(function(ownerArr) {
+            return {
+              id: ownerArr[0],
+              first_name: ownerArr[1],
+              last_name: ownerArr[2],
+              suffix: ownerArr[3] || ''
+            };
+          });
+          const formHtml = generateRadioForm({
+            title: "Which owner?",
+            items: owners,
+            inputName: "owner_id",
+            displayCallback: function(owner) {
+              let name = `${owner.last_name}, ${owner.first_name}`;
+              if (owner.suffix) name += ` ${owner.suffix}`;
+              return name;
+            },
+            formId: "choose_owner_form",
+            submitLabel: "Choose Owner"
+          });
+          $('#user_input').html(formHtml);
+          // Bind form submission with our helper.
+          bindFormSubmit("choose_owner_form", '/evaluate_owner', "owner_id", function(response) {
+            // When the owner is evaluated, show team details and load player form
+            show_team(response);
+          });
+        } else {
+          $('#user_input').html('<p>No owners found for 2025.</p>');
+        }
+      },
+      error: function(xhr, status, error) {
+        $('#user_input').html('<p>Error: ' + error + '</p>');
+      }
+    });
+  }
+
+  // Load players form (for instance, for selecting a dropped player)
+  function loadPlayerForm(team) {
+    // Convert the active_players object into an array.
+    let playersArray = Object.keys(team['active_players']).map(function(playerId) {
+      let playerObj = team['active_players'][playerId];
+      playerObj.id = playerId;
+      return playerObj;
+    });
+    // Sort players by pos_order
+    playersArray.sort((a, b) => a.pos_order - b.pos_order);
+
+    const formHtml = generateRadioForm({
+      title: "Player to drop:",
+      items: playersArray,
+      inputName: "player_id",
+      displayCallback: function(player) {
+        return player.player_display_name;
+      },
+      formId: "choose_player_form",
+      submitLabel: "Choose Player"
+    });
+    $('#user_input').html(formHtml);
+    bindFormSubmit("choose_player_form", '/evaluate_dropped_player', "player_id", function(response) {
+      console.dir(response);
+    });
+  }
+
+  // Example: If you want to call loadPlayerForm after evaluating the owner,
+  // you might call it in your success callback from evaluate_owner.
+
+  // For testing, show team function; assume server returns a team object.
+  function show_team(team) {
+    console.dir(team);
+    // For example, load the player selection form.
+    loadPlayerForm(team);
+  }
+</script>
+{% endblock %}
