@@ -1,7 +1,4 @@
 import time
-import datetime
-
-from zoneinfo import ZoneInfo
 
 from generate_pages import generate_home_page, generate_page
 from owner import Owner
@@ -178,10 +175,7 @@ def main():
 
     update_place(THIS_SEASON)
 
-    eastern = ZoneInfo("America/New_York")
-    updated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
-
-    generate_home_page(THIS_SEASON, updated_at)
+    generate_page(THIS_SEASON, "home")
 
     generate_page(THIS_SEASON, "trade")
 

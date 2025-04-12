@@ -112,12 +112,6 @@ class Team:
         """
         results = fetch_results(query, (self.owner_id, self.season))
 
-        if results:
-            print (self.nickname)
-
-            print("Benched Players")
-            print(results)
-
         benched_players = {
             row[0]: {
                 'pos': row[1],
@@ -130,6 +124,17 @@ class Team:
 
         return benched_players
 
+    def get_benched_players_count(self):
+        query = """
+            SELECT COUNT(*) FROM owner_x_player_detail
+            WHERE owner_id = %s AND season = %s AND bench_date > 0
+        """
+        results = fetch_results(query, (self.owner_id, self.season))
+        if results and results[0][0] is not None:
+            return results[0][0]
+        else:
+            print(f"No benched players found for owner {self.owner_id} in season {self.season}.")
+            return 0
     def get_total_points(self):
         query = """
             SELECT points FROM owner_x_season WHERE id = %s AND season = %s

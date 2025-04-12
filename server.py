@@ -112,8 +112,11 @@ def evaluate_owner():
     owner_id = request.form.get('owner_id')
 
     session['owner_id'] = owner_id
-    
+
     team = Team(owner_id, season=SEASON)
+
+    if team.get_benched_players_count() > 1:
+        return jsonify({"error": "Owner has already used all their trades"}), 200
 
     session['bank_current'] = team.bank_current
     session['nickname'] = team.nickname

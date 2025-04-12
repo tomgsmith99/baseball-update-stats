@@ -1,10 +1,15 @@
-# generate_home_page.py
 from jinja2 import Environment, FileSystemLoader
-from utils.conn_psql import fetch_results
-from team import Team
+from zoneinfo import ZoneInfo
 
 import boto3
+import botocore
+import datetime
 import os
+
+##########################################################
+
+from utils.conn_psql import fetch_results
+from team import Team
 
 ##########################################################
 
@@ -27,7 +32,11 @@ template = env.get_template('home.html')
 
 ##########################################################
 
-def generate_home_page(season, updated_at):
+def generate_home_page(season):
+
+    eastern = ZoneInfo("America/New_York")
+    updated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
+
     """
     Generate the home page HTML for the given season and updated_at timestamp.
     """
@@ -67,7 +76,8 @@ def generate_home_page(season, updated_at):
 
     context = {
         'teams': teams_context,
-        'updated_at': updated_at
+        'updated_at': updated_at,
+        'base_url': os.getenv('heroku_url')
     }
 
     html_output = template.render(context)
@@ -77,7 +87,23 @@ def generate_home_page(season, updated_at):
     with open(local_file, "w", encoding="utf-8") as file:
         file.write(html_output)
 
-    s3.upload_file(local_file, bucket_name, s3_key, ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/html'})
+    try:
+        s3.upload_file(
+            local_file,
+            bucket_name,
+            s3_key,
+            ExtraArgs={
+                'ACL': 'public-read',
+                'ContentType': 'text/html',
+                'CacheControl': 'max-age=0, no-cache, no-store, must-revalidate'
+            }
+        )
+        print("File uploaded successfully.")
+    except botocore.exceptions.ClientError as e:
+        # Print the error details
+        print("❌ File upload failed:", e)
+    except Exception as ex:
+        print("❌ An unexpected error occurred:", ex)
 
 def generate_page(season, section):
 
@@ -101,8 +127,10 @@ def generate_page(season, section):
 
         with open(trade_html, "w", encoding="utf-8") as file:
             file.write(rendered_trade_html)
+    
+    if section == "home":
 
-print("trade.html generated successfully.")
+        generate_home_page(season)
 
 def ordinal_place(n):
     """

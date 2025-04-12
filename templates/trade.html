@@ -262,6 +262,12 @@
             type: 'POST',
             data: { owner_id: selectedOwnerId },
             success: function(response) {
+
+              if (response['error']) {
+                $('#user_input').html('<p>Error: ' + response['error'] + '</p>');
+                return;
+              }
+              // Assuming the response contains the team data
               show_team(response);
             },
             error: function(xhr, status, error) {

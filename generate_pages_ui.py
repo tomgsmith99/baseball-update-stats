@@ -16,7 +16,7 @@ def main():
 
     print(f"Generating page {args.section}")
 
-    generate_page(THIS_SEASON, "trade")
+    generate_page(THIS_SEASON, args.section)
 
 if __name__ == "__main__":
     main()
