@@ -2,12 +2,16 @@
 <html>
   <head>
     <title>Family Fantasy Baseball Site</title>
-    <link rel="stylesheet" href="baseball.css">
+    <link rel="stylesheet" href="https://baseball.tomgsmith.com/temp/baseball.css">
     {% block head_extra %}{% endblock %}
+    {% block extra_css %}{% endblock %}
+    {% block extra_js %}{% endblock %}
   </head>
+
   <body>
     {% block content %}
     <!-- Child templates will insert their content here -->
     {% endblock %}
   </body>
+
 </html>
