@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from zoneinfo import ZoneInfo
 
@@ -11,6 +12,8 @@ import os
 from ordinal import ordinal_place
 from team import Team
 from utils.conn_psql import fetch_results
+
+load_dotenv()
 
 ##########################################################
 
