@@ -28,7 +28,7 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
 ]}})
 app.secret_key = os.getenv('secret_key')
 
-TRADES_HTML_SOURCE = os.getenv('trades_html_source')
+TRADES_HTML_SOURCE = os.getenv('TRADES_HTML_SOURCE')
 
 ###############################################
 
