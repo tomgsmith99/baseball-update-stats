@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from flask import Flask, request, session, jsonify
+from flask import Flask, request, session, jsonify, Response
 from flask_cors import CORS
 
 from utils.conn_psql import execute_query, fetch_results
@@ -8,6 +8,8 @@ from player import Player
 
 import datetime
 import os
+import requests
+
 
 ###############################################
 
@@ -25,6 +27,8 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
     BASE_URL
 ]}})
 app.secret_key = os.getenv('secret_key')
+
+TRADES_HTML_SOURCE = os.getenv('trades_html_source')
 
 ###############################################
 
@@ -206,6 +210,18 @@ def get_owners():
     owners = fetch_results(query, (SEASON,))
 
     return owners
+
+@app.route("/trade")
+def trade():
+    try:
+        # Fetch the HTML from S3
+        s3_response = requests.get(TRADES_HTML_SOURCE)
+        s3_response.raise_for_status()  # Raise error for 4xx/5xx
+
+        return Response(s3_response.text, mimetype='text/html')
+
+    except requests.exceptions.RequestException as e:
+        return f"Error loading trade page: {e}", 502
 
 #################################################
 

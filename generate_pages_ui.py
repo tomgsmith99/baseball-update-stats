@@ -5,7 +5,7 @@ import argparse
 
 THIS_SEASON = 2025
 
-valid_pages = ['home', 'make_a_trade', 'players']
+valid_pages = ['home', 'trades', 'players']
 valid_sections = ['players']
 
 ##########################
