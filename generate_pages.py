@@ -134,7 +134,8 @@ def generate_page(season, section):
         context = {
             'season': season,
             'players': results,
-            'generated_at': generated_at
+            'generated_at': generated_at,
+            'active_page': 'players'
         }
 
         template = env.get_template('players.html')
