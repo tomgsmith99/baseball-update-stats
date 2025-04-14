@@ -20,10 +20,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a href="/" class="nav-link {{ 'active' if active_page == 'home' else '' }}">Home</a>
+              <a href="{{web_home}}" class="nav-link {{ 'active' if active_page == 'home' else '' }}">Home</a>
             </li>
             <li class="nav-item">
-              <a href="{{web_home}}seasons/2025/players" class="nav-link {{ 'active' if active_page == 'players' else '' }}">Players</a>
+              <a href="{{web_home}}/seasons/2025/players" class="nav-link {{ 'active' if active_page == 'players' else '' }}">Players</a>
             </li>
             <!-- <li class="nav-item"><a class="nav-link" href="/standings">Standings</a></li> -->
             <li class="nav-item">
