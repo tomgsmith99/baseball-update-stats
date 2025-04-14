@@ -13,7 +13,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">Family Fantasy Baseball</a>
+        <a class="navbar-brand" href="{{web_home}}">Family Fantasy Baseball</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -23,7 +23,7 @@
               <a href="/" class="nav-link {{ 'active' if active_page == 'home' else '' }}">Home</a>
             </li>
             <li class="nav-item">
-              <a href="/seasons/2025/players" class="nav-link {{ 'active' if active_page == 'players' else '' }}">Players</a>
+              <a href="{{web_home}}seasons/2025/players" class="nav-link {{ 'active' if active_page == 'players' else '' }}">Players</a>
             </li>
             <!-- <li class="nav-item"><a class="nav-link" href="/standings">Standings</a></li> -->
             <li class="nav-item">

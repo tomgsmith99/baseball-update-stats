@@ -22,6 +22,8 @@ BUCKET_NAME = 'baseball.tomgsmith.com'
 HOME_PATH = os.getenv('home_path')
 HTML_PATH = f'{HOME_PATH}/html'
 
+WEB_HOME = os.getenv('web_home')
+
 ##########################################################
 # AWS S3 Configuration
 
@@ -51,7 +53,9 @@ def generate_page(season, section):
         context = {
             'base_url': base_url,
             'season': season,
-            'generated_at': generated_at
+            'generated_at': generated_at,
+            'web_home': WEB_HOME,
+            'active_page': 'trades'
         }
 
         template = env.get_template('trade.html')
@@ -106,7 +110,8 @@ def generate_page(season, section):
             'teams': teams_context,
             'generated_at': generated_at,
             'base_url': os.getenv('heroku_url'),
-            'active_page': 'home'
+            'active_page': 'home',
+            'web_home': WEB_HOME
         }
 
         template = env.get_template('home.html')
@@ -136,7 +141,8 @@ def generate_page(season, section):
             'season': season,
             'players': results,
             'generated_at': generated_at,
-            'active_page': 'players'
+            'active_page': 'players',
+            'web_home': WEB_HOME
         }
 
         template = env.get_template('players.html')
