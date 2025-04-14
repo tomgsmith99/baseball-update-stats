@@ -116,8 +116,6 @@ class Owner:
 
     def update_stats(self, season):
 
-        # Calculate points for benched players here
-
         points = self.get_current_points(season)
 
         current_day_of_year = datetime.datetime.now().timetuple().tm_yday
@@ -136,9 +134,43 @@ class Owner:
 
         execute_query(query, values)
 
+        # Calculate owner's recent points
+
+        recent_day = current_day_of_year - 5
+
         query = """
-            UPDATE owner_x_season set points = %s WHERE season = %s AND id = %s;
+            SELECT points FROM owner_x_points_x_day_x_season
+            WHERE id = %s AND season = %s AND day = %s
         """
-        values = (points, season, self.id)
+        values = (self.id, season, recent_day)
+        results = fetch_results(query, values)
+        if results and results[0][0] is not None:
+            recent_points = results[0][0]
+        else:
+            recent_points = 0
+            print(f"No recent points found for owner {self.id} in season {season}.")
+        
+        # Calculate owner's yesterday points
+
+        yesterday = current_day_of_year - 1
+
+        query = """
+            SELECT points FROM owner_x_points_x_day_x_season
+            WHERE id = %s AND season = %s AND day = %s
+        """
+        values = (self.id, season, yesterday)
+        results = fetch_results(query, values)
+        if results and results[0][0] is not None:
+            yesterday_points = results[0][0]
+        else:
+            yesterday_points = 0
+            print(f"No yesterday points found for owner {self.id} in season {season}.")
+
+        # Update owner record
+        query = """
+            UPDATE owner_x_season set points = %s, yesterday = %s, recent = %s
+            WHERE season = %s AND id = %s;
+        """
+        values = (points, recent_points, yesterday_points, season, self.id)
 
         execute_query(query, values)
