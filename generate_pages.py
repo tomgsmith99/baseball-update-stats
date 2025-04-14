@@ -106,7 +106,6 @@ def generate_page(season, section):
             'teams': teams_context,
             'generated_at': generated_at,
             'base_url': os.getenv('heroku_url'),
-            'season': season
         }
 
         template = env.get_template('home.html')
