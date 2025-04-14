@@ -104,7 +104,7 @@ def generate_page(season, section):
 
         context = {
             'teams': teams_context,
-            'updated_at': generated_at,
+            'generated_at': generated_at,
             'base_url': os.getenv('heroku_url')
         }
 
