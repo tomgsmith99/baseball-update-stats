@@ -10,7 +10,6 @@ import datetime
 import os
 import requests
 
-
 ###############################################
 
 load_dotenv()

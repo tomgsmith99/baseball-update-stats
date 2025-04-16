@@ -102,12 +102,7 @@
     .player-entry input[type="radio"] {
       transform: scale(1.2);
     }
-  
-    #result {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
+
   </style>
 {% endblock %}
 
@@ -127,6 +122,8 @@
 
   <p>FMJ</p>
 
+  <div id="password_error" style="color: red; font-weight: bold; margin-bottom: 10px;"></div>
+
   <form id="submit_password">
       <label for="password">Password:</label>
       <input type="password" name="password" id="password" required>
@@ -142,8 +139,10 @@
     const base_url = '{{base_url}}';
 
     $(document).ready(function() {
+
       $('#submit_password').on('submit', function(e) {
-        e.preventDefault();  // Prevent the default form submission
+
+        e.preventDefault();
 
         var formData = $(this).serialize();
 
@@ -159,11 +158,13 @@
               show_owners();
             } else {
               // If the password is incorrect, show an error message
-              $('#result').html('Incorrect password. Please try again.');
+              $('#password_error').html('Incorrect password. Please try again.');
+              $('#password').val(''); // Clear the input
+              $('#password').focus(); // Optional: put cursor back in field
             }
           },
           error: function(xhr, status, error) {
-            $('#result').html('Error: ' + error);
+            $('#password_error').html('Error: ' + error);
           }
         });
       });
@@ -380,7 +381,7 @@
                 show_team(response);
               },
               error: function(xhr, status, error) {
-                $('#result').html('Error: ' + error);
+                $('#password_error').html('Error: ' + error);
               }
             });
           });

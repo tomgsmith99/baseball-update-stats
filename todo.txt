@@ -1,7 +1,14 @@
-cron log management
+change the way trades are stored:
+    owner_id | dropped_player_id | added_player_id | day | timestamp
+    actually trades are already stored this way in the Trades table
+    but make the owner_x_season table refer to this table
 css management
 move classes into classes dir
 refactor Team class
-generate specific pages (trades, for example)
+
+Completed
+cron log management
 test     if not session.get('logged_in'):
+generate specific pages (trades, for example)
+
 
