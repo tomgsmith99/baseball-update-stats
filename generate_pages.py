@@ -43,40 +43,6 @@ def generate_page(season, section):
 
     generated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
 
-    if section == "trades":
-
-        # base_url = os.getenv('base_url')
-        base_url = os.getenv('heroku_url')
-
-        WEB_HOME = os.getenv('s3_home')
-
-        print(f"Generating {section} page for season {season}...")
-
-        context = {
-            'base_url': base_url,
-            'season': season,
-            'generated_at': generated_at,
-            'web_home': WEB_HOME,
-            'active_page': 'trades'
-        }
-
-        template = env.get_template('trade.html')
-
-        local_path = f'trades/index.html'
-
-        write_html(template, context, local_path)
-
-        # local_path = f'static/index.html'
-
-        # html = template.render(context)
-
-        # full_path = os.path.join(HOME_PATH, local_path)
-
-        # os.makedirs(os.path.dirname(full_path), exist_ok=True)
-
-        # with open(full_path, "w", encoding="utf-8") as file:
-        #     file.write(html)
-    
     if section == "home":
 
         query = """
@@ -154,6 +120,39 @@ def generate_page(season, section):
         template = env.get_template('players.html')
 
         local_path = f'seasons/{season}/players/index.html'
+
+        write_html(template, context, local_path)
+
+    if section == "trades":
+
+        query = """
+            SELECT owner_id, dropped_player_id, dropped_player_name, added_player_id, added_player_name, stamp, stamp_old FROM trades_detail WHERE season = %s
+        """
+
+        results = fetch_results(query, (season,), True)
+
+        for row in results:
+
+            print(row)
+
+        # base_url = os.getenv('base_url')
+        base_url = os.getenv('heroku_url')
+
+        WEB_HOME = os.getenv('s3_home')
+
+        print(f"Generating {section} page for season {season}...")
+
+        context = {
+            'base_url': base_url,
+            'season': season,
+            'generated_at': generated_at,
+            'web_home': WEB_HOME,
+            'active_page': 'trades'
+        }
+
+        template = env.get_template('trade.html')
+
+        local_path = f'trades/index.html'
 
         write_html(template, context, local_path)
 

@@ -91,6 +91,15 @@ def commit_trade():
 
     execute_query(query, values)
 
+    # Update the trades table
+    query = """
+        INSERT INTO trades (season, owner_id, dropped_player_id, added_player_id, day, stamp, trade_type)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    values = (SEASON, owner_id, dropped_player_id, added_player_id, day_of_year, now, "regular")
+
+    execute_query(query, values)
+
     return jsonify({"success": True})
 
 # Evaluate password
