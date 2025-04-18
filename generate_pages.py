@@ -165,7 +165,7 @@ def generate_page(season, section):
             'base_url': base_url,
             'season': season,
             'generated_at': generated_at,
-            'web_home': os.getenv('s3_home'),
+            'web_home': os.getenv('s3_web_home'),
             'active_page': 'trades'
         }
 
