@@ -24,6 +24,8 @@ HTML_PATH = f'{HOME_PATH}/html'
 
 WEB_HOME = os.getenv('web_home')
 
+MAKE_A_TRADE_URL = os.getenv('make_a_trade_url')
+
 ##########################################################
 # AWS S3 Configuration
 
@@ -126,7 +128,10 @@ def generate_page(season, section):
     if section == "trades":
 
         query = """
-            SELECT owner_id, dropped_player_id, dropped_player_name, added_player_id, added_player_name, stamp, stamp_old FROM trades_detail WHERE season = %s
+            SELECT owner_id, owner_nickname, dropped_player_id, dropped_player_name, added_player_id, added_player_name, stamp, stamp_old
+            FROM trades_detail
+            WHERE season = %s
+            ORDER BY stamp DESC
         """
 
         results = fetch_results(query, (season,), True)
@@ -134,11 +139,25 @@ def generate_page(season, section):
         for row in results:
 
             print(row)
+        
+        context = {
+            'season': season,
+            'trades': results,
+            'generated_at': generated_at,
+            'web_home': WEB_HOME,
+            'active_page': 'trades',
+            'make_a_trade_url': MAKE_A_TRADE_URL
+        }
 
-        # base_url = os.getenv('base_url')
+        template = env.get_template('trades.html')
+
+        local_path = f'seasons/{season}/trades/index.html'
+
+        write_html(template, context, local_path)
+
+        # Generate the "make a trade" page
+
         base_url = os.getenv('heroku_url')
-
-        WEB_HOME = os.getenv('s3_home')
 
         print(f"Generating {section} page for season {season}...")
 
@@ -146,13 +165,13 @@ def generate_page(season, section):
             'base_url': base_url,
             'season': season,
             'generated_at': generated_at,
-            'web_home': WEB_HOME,
+            'web_home': os.getenv('s3_home'),
             'active_page': 'trades'
         }
 
         template = env.get_template('trade.html')
 
-        local_path = f'trades/index.html'
+        local_path = f'trades/make_a_trade.html'
 
         write_html(template, context, local_path)
 

@@ -27,7 +27,7 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
 ]}})
 app.secret_key = os.getenv('secret_key')
 
-TRADES_HTML_SOURCE = os.getenv('TRADES_HTML_SOURCE')
+TRADES_HTML_SOURCE = os.getenv('s3_web_home') + '/trades/make_a_trade.html'
 
 ###############################################
 

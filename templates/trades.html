@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Trades {{ season }}</h1>
+
+<div id = 'make_a_trade'>
+    <p><a href ='{{ make_a_trade_url }}'><button id = 'make_a_trade_button' class="btn btn-primary">Make a Trade</button></a></p>
+</div>
+
+<div class="trades-block">
+    <table id="trades-table" class="table table-striped table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>Owner</th>
+          <th>Dropped Player</th>
+          <th>Added Player</th>
+          <th class="text-center">Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for trade in trades %}
+        <tr>
+          <td><a href='/owners/{{ trade.owner_id }}'>{{ trade.owner_nickname }}</a></td>
+          <td><a href="/players/{{ trade.dropped_player_id }}">{{ trade.dropped_player_name }}</a></td>
+          <td><a href="/players/{{ trade.added_player_id }}">{{ trade.added_player_name }}</a></td>
+          <td class="text-center">{{ trade.stamp }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p>generated at: {{generated_at}}</p>
+
+</div>
+
+{% endblock %}
