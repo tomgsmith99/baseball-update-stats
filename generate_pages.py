@@ -1,10 +1,10 @@
+from datetime import datetime
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from zoneinfo import ZoneInfo
 
 import boto3
 import botocore
-import datetime
 import os
 
 ##########################################################
@@ -43,7 +43,7 @@ def generate_page(season, section):
 
     eastern = ZoneInfo("America/New_York")
 
-    generated_at = datetime.datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
+    generated_at = datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
 
     if section == "home":
 
@@ -138,7 +138,16 @@ def generate_page(season, section):
 
         for row in results:
 
-            print(row)
+            # dt = datetime.fromisoformat(row['stamp'])
+
+            dt = row['stamp']
+
+            month = dt.strftime("%B")
+            day = ordinal_place(dt.day)
+
+            row['stamp'] = f"{month} {day}"
+
+            # row['stamp'] = row['stamp'].strftime("%B %-d")
         
         context = {
             'season': season,

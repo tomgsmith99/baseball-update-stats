@@ -22,7 +22,7 @@
       <tbody>
         {% for trade in trades %}
         <tr>
-          <td><a href='/owners/{{ trade.owner_id }}'>{{ trade.owner_nickname }}</a></td>
+          <td><a href="/owners/{{ trade.owner_id }}">{{ trade.owner_nickname }}</a></td>
           <td><a href="/players/{{ trade.dropped_player_id }}">{{ trade.dropped_player_name }}</a></td>
           <td><a href="/players/{{ trade.added_player_id }}">{{ trade.added_player_name }}</a></td>
           <td class="text-center">{{ trade.stamp }}</td>
