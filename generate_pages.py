@@ -195,7 +195,7 @@ def get_leaders(season, obj_type, category):
     if obj_type == 'owners' and category == 'recent':
 
         query = """
-            SELECT owner_id, owner_nickname, recent
+            SELECT id, owner_nickname, recent
             FROM owner_x_season_detail
             WHERE season = %s
             ORDER BY recent DESC
