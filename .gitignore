@@ -1,8 +1,8 @@
 venv/
 .env
 html/*
+!html/baseball.css
 html/*.html
-html/*.css
 __pycache__/
 .DS_Store
 *.csv
