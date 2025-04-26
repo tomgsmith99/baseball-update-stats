@@ -23,7 +23,7 @@
       <tbody>
         {# Active Players #}
         {% for player_id, player in active_players.items() %}
-        <tr>
+        <tr {% if player.start_date > 0 %}class="added-player"{% endif %}>
           <td>{{ player.pos }}</td>
           <td><a href="/players/{{ player_id }}">{{ player.player_display_name }}</a></td>
           <td class="text-center">{{ player.team }}</td>
