@@ -191,6 +191,11 @@ def main():
     print("Generating players page...")
     generate_page(THIS_SEASON, "players")
 
+    print("uploading css...")
+    generate_page(THIS_SEASON, "css")
+
+
+
     #################################################################
 
     exit()

@@ -45,6 +45,14 @@ def generate_page(season, section):
 
     generated_at = datetime.now(tz=eastern).strftime("%A, %B %d, %I:%M %p")
 
+    if section == "css":
+
+        print("Generating CSS...")
+
+        local_path = f'html/baseball.css'
+
+        upload_html_to_s3(local_path, 'baseball.css')
+
     if section == "home":
 
         query = """
