@@ -186,7 +186,7 @@ def main():
     generate_page(THIS_SEASON, "home")
 
     print("Generating trades page...")
-    generate_page(THIS_SEASON, "make_a_trade")
+    generate_page(THIS_SEASON, "trades")
 
     print("Generating players page...")
     generate_page(THIS_SEASON, "players")

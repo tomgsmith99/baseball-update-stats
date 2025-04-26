@@ -94,6 +94,8 @@ def generate_page(season, section):
 
         write_html(template, context, local_path)
 
+        hot_owners = get_leaders(season, 'owners', 'recent')
+
     if section == "players":
 
         query = """
@@ -187,6 +189,27 @@ def generate_page(season, section):
 def generate_section(section):
 
     print(f"Generating {section} section...")
+
+def get_leaders(season, obj_type, category):
+    
+    if obj_type == 'owners' and category == 'recent':
+
+        query = """
+            SELECT owner_id, owner_nickname, recent
+            FROM owners_x_season_detail
+            WHERE season = %s
+            ORDER BY recent DESC
+        """
+
+        results = fetch_results(query, (season,), True)
+
+        if not results:
+            print(f"No owners found for season {season}.")
+            exit()
+
+        print(f"{len(results)} owners found for season {season}.")
+
+    return results
 
 def upload_html_to_s3(local_file, s3_key):
 
