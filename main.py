@@ -194,8 +194,6 @@ def main():
     print("uploading css...")
     generate_page(THIS_SEASON, "css")
 
-
-
     #################################################################
 
     exit()

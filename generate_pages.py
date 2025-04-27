@@ -56,23 +56,23 @@ def generate_page(season, section):
     if section == "home":
 
         query = """
-            SELECT id FROM owner_x_season WHERE season = %s ORDER BY place ASC
+            SELECT id, nickname, recent, yesterday FROM owner_x_season_detail WHERE season = %s ORDER BY place ASC
         """
 
-        results = fetch_results(query, (season,))
+        owners = fetch_results(query, (season,))
 
-        if not results:
+        if not owners:
             print(f"No owners found for season {season}.")
             exit()
 
-        total_owners = len(results)
+        total_owners = len(owners)
 
         print(f"{total_owners} owners with teams in season {season}:")
         print("\n*******************************************************")
 
         teams_context = []
 
-        for count, row in enumerate(results, start=1):
+        for count, row in enumerate(owners, start=1):
             owner_id = row[0]
             team = Team(owner_id, season)
             place = team.place
@@ -88,12 +88,20 @@ def generate_page(season, section):
 
             print(f"Processed {count}/{total_owners}: {team.nickname} - {team.team_name}")
 
+        # hot owners
+        hottest_owners = sorted(owners, key=lambda x: x['recent'], reverse=True)[:5]
+
+        # yesterday owners
+        yesterday_owners = sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5]
+
         context = {
             'teams': teams_context,
             'generated_at': generated_at,
             'base_url': os.getenv('heroku_url'),
             'active_page': 'home',
-            'web_home': WEB_HOME
+            'web_home': WEB_HOME,
+            'hottest_owners': hottest_owners,
+            'yesterday_owners': yesterday_owners
         }
 
         template = env.get_template('home.html')
@@ -199,7 +207,7 @@ def generate_section(section):
     print(f"Generating {section} section...")
 
 def get_leaders(season, obj_type, category):
-    
+
     if obj_type == 'owners' and category == 'recent':
 
         query = """

@@ -145,7 +145,9 @@ class Owner:
         values = (self.id, season, recent_day)
         results = fetch_results(query, values)
         if results and results[0][0] is not None:
-            recent_points = results[0][0]
+            prev_points = results[0][0]
+
+            recent_points = points - prev_points
         else:
             recent_points = 0
             print(f"No recent points found for owner {self.id} in season {season}.")
@@ -161,7 +163,9 @@ class Owner:
         values = (self.id, season, yesterday)
         results = fetch_results(query, values)
         if results and results[0][0] is not None:
-            yesterday_points = results[0][0]
+            prev_points = results[0][0]
+
+            yesterday_points = points - prev_points
         else:
             yesterday_points = 0
             print(f"No yesterday points found for owner {self.id} in season {season}.")

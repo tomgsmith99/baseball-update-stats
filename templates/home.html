@@ -3,9 +3,32 @@
 {% block content %}
 
 <div class="container">
-  <p>last updated: {{ generated_at }}</p>
 
-  <h2>League Standings</h2>
+  <p>Last updated: {{ generated_at }}</p>
+
+  <!-- ✨ Two Dropdowns -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-2">
+      <select id="owner-selector" class="form-select" onchange="scrollToSection(this.value)">
+        <option value="">Owners</option>
+        {% for team_context in teams %}
+          {% set team = team_context.team %}
+          <option value="{{ team.season }}_{{ team.owner_id }}">{{ team.nickname }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-6 mb-2">
+      <select id="leaderboard-selector" class="form-select" onchange="scrollToSection(this.value)">
+        <option value="">League Leaders</option>
+        <option value="leaderboard_hottest">Owners - Hottest</option>
+        <option value="leaderboard_yesterday">Owners - Yesterday</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ✨ League Standings Section -->
+  <h2 id="standings">League Standings</h2>
 
   <table class="table table-striped table-sm">
     <thead>
@@ -20,16 +43,66 @@
       {% for team_context in teams %}
         {% set place = team_context.place %}
         {% set team = team_context.team %}
-        {% set points = team_context.points %}
         <tr>
           <td>{{ place }}</td>
-          <td class="text-center"><a href = '#{{ team.season}}_{{team.owner_id}}'>{{ team.nickname }}</a></td>
-          <td class="text-center"><a href = '#{{ team.season}}_{{team.owner_id}}'>{{ team.team_name }}</a></td>
+          <td class="text-center"><a href="#{{ team.season}}_{{team.owner_id}}">{{ team.nickname }}</a></td>
+          <td class="text-center"><a href="#{{ team.season}}_{{team.owner_id}}">{{ team.team_name }}</a></td>
           <td class="text-right">{{ team.total_points }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <!-- League Leaders Section -->
+  <div class="leaderboards">
+    <div class="leaderboard-section">
+      <h4 id="leaderboard_hottest" class="mt-4">Owners - Hottest</h4>
+      <table class="table table-sm table-striped leaderboard-table">
+        <colgroup>
+          <col style="width: 10%;">
+          <col style="width: 60%;">
+          <col style="width: 30%;">
+        </colgroup>
+        <thead>
+          <tr><th>#</th><th>Owner</th><th>Recent</th></tr>
+        </thead>
+        <tbody>
+          {% for owner in hottest_owners %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ owner.nickname }}</td>
+            <td class="text-right">{{ owner.recent }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="leaderboard-section">
+      <h4 id="leaderboard_yesterday" class="mt-4">Owners - Yesterday</h4>
+      <table class="table table-sm table-striped leaderboard-table">
+        <colgroup>
+          <col style="width: 10%;">
+          <col style="width: 60%;">
+          <col style="width: 30%;">
+        </colgroup>
+        <thead>
+          <tr><th>#</th><th>Owner</th><th>Yesterday</th></tr>
+        </thead>
+        <tbody>
+          {% for owner in yesterday_owners %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ owner.nickname }}</td>
+            <td class="text-right">{{ owner.yesterday }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>  
+  <!-- ✨ Team Details Section -->
+  <h2 id="teams" class="mt-5">Team Details</h2>
 
   {% for team_context in teams %}
     {% set team = team_context.team %}
@@ -37,8 +110,23 @@
     {% set place = team_context.place %}
     {% set active_players = team_context.active_players %}
     {% set benched_players = team_context.benched_players %}
-    {% include "team_block.html" %}
+    <div id="{{ team.season }}_{{ team.owner_id }}">
+      {% include "team_block.html" %}
+    </div>
   {% endfor %}
-{% endblock %}
 
 </div>
+
+<!-- Smooth scroll JavaScript -->
+<script>
+function scrollToSection(sectionId) {
+  if (sectionId) {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+</script>
+
+{% endblock %}

@@ -80,6 +80,37 @@
       text-align: right;
     }
 
-    .added-player {
-      background-color: #e6ffe6; /* light green */
+    tbody tr.added-player td {
+      font-style: italic;
+    }
+    
+    .leaderboards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+    }
+    
+    .leaderboard-section {
+      flex: 1 1 300px;
+      max-width: 320px;
+    }
+        
+    /* Keep column widths consistent across both tables */
+    .leaderboard-table th.col-num,
+    .leaderboard-table td:first-child {
+      width: 30px;
+      text-align: center;
+    }
+    
+    .leaderboard-table th.col-owner,
+    .leaderboard-table td:nth-child(2) {
+      width: 150px;
+    }
+    
+    .leaderboard-table th.col-points,
+    .leaderboard-table td:nth-child(3) {
+      width: 90px;
+      text-align: right;
     }

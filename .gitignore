@@ -6,3 +6,5 @@ html/*.html
 __pycache__/
 .DS_Store
 *.csv
+scratch.txt
+templates/homeBAK.html
