@@ -56,7 +56,7 @@ def generate_page(season, section):
     if section == "home":
 
         query = """
-            SELECT id, nickname, recent, yesterday FROM owner_x_season_detail WHERE season = %s ORDER BY place ASC
+            SELECT id, nickname AS display_name, recent, yesterday FROM owner_x_season_detail WHERE season = %s ORDER BY place ASC
         """
 
         owners = fetch_results(query, (season,))
@@ -88,11 +88,26 @@ def generate_page(season, section):
 
             print(f"Processed {count}/{total_owners}: {team.nickname} - {team.team_name}")
 
-        # hot owners
-        hottest_owners = sorted(owners, key=lambda x: x['recent'], reverse=True)[:5]
+        # get players
 
-        # yesterday owners
+        query = """
+            SELECT id, pos, display_name, team, points, p_type, salary, val, yesterday, recent
+            FROM player_x_season_detail
+            WHERE season = %s
+        """
+
+        players = fetch_results(query, (season,), True)
+
+        hottest_owners = sorted(owners, key=lambda x: x['recent'], reverse=True)[:5]
         yesterday_owners = sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5]
+        yesterday_players = sorted(players, key=lambda x: x['yesterday'], reverse=True)[:5]
+
+        leaderboards = [
+            {"id": "lboard_owners_hottest", "title": "Owners - Hottest", "items": hottest_owners, "item_type": "owner", "field": "recent"},
+            {"id": "lboard_owners_yesterday", "title": "Owners - Yesterday", "items": yesterday_owners, "item_type": "owner", "field": "yesterday"},
+            {"id": "lboard_players_yesterday", "title": "Players - Yesterday", "items": yesterday_players, "item_type": "player", "field": "yesterday"},
+            # Add your other 7 leaderboards here...
+        ]
 
         context = {
             'teams': teams_context,
@@ -100,17 +115,19 @@ def generate_page(season, section):
             'base_url': os.getenv('heroku_url'),
             'active_page': 'home',
             'web_home': WEB_HOME,
-            'hottest_owners': hottest_owners,
-            'yesterday_owners': yesterday_owners
-        }
+            'hottest_owners': sorted(owners, key=lambda x: x['recent'], reverse=True)[:5],
+            'yesterday_owners': sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5],
+            'owners_by_name': sorted(owners, key=lambda x: x['display_name']),
+            'season': season,
+            'players': players,
+            'leaderboards': leaderboards
+            }
 
         template = env.get_template('home.html')
 
         local_path = f'index.html'
 
         write_html(template, context, local_path)
-
-        hot_owners = get_leaders(season, 'owners', 'recent')
 
     if section == "players":
 
@@ -205,27 +222,6 @@ def generate_page(season, section):
 def generate_section(section):
 
     print(f"Generating {section} section...")
-
-def get_leaders(season, obj_type, category):
-
-    if obj_type == 'owners' and category == 'recent':
-
-        query = """
-            SELECT id, nickname, recent
-            FROM owner_x_season_detail
-            WHERE season = %s
-            ORDER BY recent DESC
-        """
-
-        results = fetch_results(query, (season,), True)
-
-        if not results:
-            print(f"No owners found for season {season}.")
-            exit()
-
-        print(f"{len(results)} owners found for season {season}.")
-
-    return results
 
 def upload_html_to_s3(local_file, s3_key):
 

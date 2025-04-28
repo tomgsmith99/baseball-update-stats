@@ -1,5 +1,6 @@
 venv/
 .env
+html/seasons
 html/*
 !html/baseball.css
 html/*.html

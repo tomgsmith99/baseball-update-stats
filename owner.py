@@ -136,6 +136,8 @@ class Owner:
 
         # Calculate owner's recent points
 
+        print(f"Calculating recent points for owner {self.id} in season {season}...")
+
         recent_day = current_day_of_year - 5
 
         query = """
@@ -148,6 +150,8 @@ class Owner:
             prev_points = results[0][0]
 
             recent_points = points - prev_points
+
+            print(f"Recent points for owner {self.id} in season {season}: {recent_points}")
         else:
             recent_points = 0
             print(f"No recent points found for owner {self.id} in season {season}.")
@@ -175,6 +179,6 @@ class Owner:
             UPDATE owner_x_season set points = %s, yesterday = %s, recent = %s
             WHERE season = %s AND id = %s;
         """
-        values = (points, recent_points, yesterday_points, season, self.id)
+        values = (points, yesterday_points, recent_points, season, self.id)
 
         execute_query(query, values)
