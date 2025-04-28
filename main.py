@@ -174,9 +174,9 @@ def main():
 
     print("Updating stats...")
 
-    # update_players(THIS_SEASON)
+    update_players(THIS_SEASON)
 
-    # update_owner_x_player_table(THIS_SEASON)
+    update_owner_x_player_table(THIS_SEASON)
 
     update_owners(THIS_SEASON)
 
