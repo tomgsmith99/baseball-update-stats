@@ -100,13 +100,14 @@ def generate_page(season, section):
 
         hottest_owners = sorted(owners, key=lambda x: x['recent'], reverse=True)[:5]
         yesterday_owners = sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5]
+        hottest_players = sorted(players, key=lambda x: x['recent'], reverse=True)[:5]
         yesterday_players = sorted(players, key=lambda x: x['yesterday'], reverse=True)[:5]
 
         leaderboards = [
             {"id": "lboard_owners_hottest", "title": "Owners - Hottest", "items": hottest_owners, "item_type": "owner", "field": "recent"},
             {"id": "lboard_owners_yesterday", "title": "Owners - Yesterday", "items": yesterday_owners, "item_type": "owner", "field": "yesterday"},
             {"id": "lboard_players_yesterday", "title": "Players - Yesterday", "items": yesterday_players, "item_type": "player", "field": "yesterday"},
-            # Add your other 7 leaderboards here...
+            {"id": "lboard_players_hottest", "title": "Players - Hottest", "items": hottest_players, "item_type": "player", "field": "recent"}
         ]
 
         context = {
@@ -115,13 +116,11 @@ def generate_page(season, section):
             'base_url': os.getenv('heroku_url'),
             'active_page': 'home',
             'web_home': WEB_HOME,
-            'hottest_owners': sorted(owners, key=lambda x: x['recent'], reverse=True)[:5],
-            'yesterday_owners': sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5],
             'owners_by_name': sorted(owners, key=lambda x: x['display_name']),
             'season': season,
             'players': players,
             'leaderboards': leaderboards
-            }
+        }
 
         template = env.get_template('home.html')
 

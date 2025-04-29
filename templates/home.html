@@ -20,12 +20,11 @@
     <div class="col-md-6 mb-2">
       <select id="leaderboard-selector" class="form-select" onchange="scrollToSection(this.value)">
         <option value="">League Leaders</option>
-        <option value="leaderboard_hottest">Owners - Hottest</option>
-        <option value="leaderboard_yesterday">Owners - Yesterday</option>
-        <option value="leaderboard_players_yesterday">Players - Yesterday</option>
+        {% for leaderboard in leaderboards %}
+          <option value="{{ leaderboard['id'] }}">{{ leaderboard['title'] }}</option>
+        {% endfor %}
       </select>
-    </div>
-  
+    </div>  
   </div>
 
   <!-- League Standings Section -->
@@ -67,8 +66,8 @@
         </colgroup>
         <thead>
           <tr>
-            <th>#</th>
-            <th>{{ "Owner" if leaderboard['item_type'] == "owner" else "Player" }}</th>
+            <th></th>
+            <th>{{ leaderboard['item_type']|capitalize }}</th>
             <th>{{ leaderboard['field']|capitalize }}</th>
           </tr>
         </thead>
@@ -77,7 +76,7 @@
           <tr>
             <td>{{ loop.index }}</td>
             <td>
-              <a href="#{{ season }}_{{ item.id }}">
+              <a href="{% if leaderboard['item_type'] == 'owner' %}#{{ season }}_{{ item.id }}{% else %}/players/{{ item.id }}{% endif %}">
                 {{ item.display_name }}
               </a>
             </td>
