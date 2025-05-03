@@ -102,12 +102,14 @@ def generate_page(season, section):
         yesterday_owners = sorted(owners, key=lambda x: x['yesterday'], reverse=True)[:5]
         hottest_players = sorted(players, key=lambda x: x['recent'], reverse=True)[:5]
         yesterday_players = sorted(players, key=lambda x: x['yesterday'], reverse=True)[:5]
+        most_valuable_players = sorted(players, key=lambda x: x['val'], reverse=True)[:5]
 
         leaderboards = [
             {"id": "lboard_owners_hottest", "title": "Owners - Hottest", "items": hottest_owners, "item_type": "owner", "field": "recent"},
             {"id": "lboard_owners_yesterday", "title": "Owners - Yesterday", "items": yesterday_owners, "item_type": "owner", "field": "yesterday"},
             {"id": "lboard_players_yesterday", "title": "Players - Yesterday", "items": yesterday_players, "item_type": "player", "field": "yesterday"},
-            {"id": "lboard_players_hottest", "title": "Players - Hottest", "items": hottest_players, "item_type": "player", "field": "recent"}
+            {"id": "lboard_players_hottest", "title": "Players - Hottest", "items": hottest_players, "item_type": "player", "field": "recent"},
+            {"id": "lboard_players_val", "title": "Players - Most Valuable", "items": most_valuable_players, "item_type": "player", "field": "val"}
         ]
 
         context = {
