@@ -25,13 +25,13 @@
         {% for player_id, player in active_players.items() %}
         <tr {% if player.start_date > 0 %}class="added-player"{% endif %}>
           <td>{{ player.pos }}</td>
-          <td><a href="/players/{{ player_id }}">{{ player.player_display_name }}</a></td>
+          <td><a href="/players/{{ player_id }}" class="text-decoration-none text-reset">{{ player.player_display_name }}</a></td>
           <td class="text-center">{{ player.team }}</td>
-          <td class="player_row_cell_rt text-right">${{ player.salary }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.points }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.yesterday }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.recent }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.val }}</td>
+          <td class="text-end">${{ player.salary }}</td>
+          <td class="text-end">{{ player.points }}</td>
+          <td class="text-end">{{ player.yesterday }}</td>
+          <td class="text-end">{{ player.recent }}</td>
+          <td class="text-end">{{ player.val }}</td>
         </tr>
         {% endfor %}
         
@@ -43,25 +43,25 @@
         {% for player_id, player in benched_players.items() %}
         <tr>
           <td>{{ player.pos }}</td>
-          <td><a href="/players/{{ player_id }}">{{ player.player_display_name }}</a></td>
+          <td><a href="/players/{{ player_id }}" class="text-decoration-none text-reset">{{ player.player_display_name }}</a></td>
           <td class="text-center">{{ player.team }}</td>
-          <td class="player_row_cell_rt text-right">${{ player.salary }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.points }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.yday }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.rec }}</td>
-          <td class="player_row_cell_rt text-right">{{ player.val }}</td>
+          <td class="text-end">${{ player.salary }}</td>
+          <td class="text-end">{{ player.points }}</td>
+          <td class="text-end">{{ player.yday }}</td>
+          <td class="text-end">{{ player.rec }}</td>
+          <td class="text-end">{{ player.val }}</td>
         </tr>
         {% endfor %}
         {% endif %}
         
         {# Totals Row #}
         <tr>
-          <td colspan="3" class="text-right">bank: ${{ team.bank_current }}</td>
-          <td class="text-right"><strong>${{ team.salary_current }}</strong></td>
-          <td class="text-right"><strong>{{ team.total_points }}</strong></td>
-          <td class="text-right"><strong>{{ team.yesterday }}</strong></td>
-          <td class="text-right"><strong>{{ team.recent }}</strong></td>
-          <td class="text-right"><a href="#top">top</a></td>
+          <td colspan="3" class="text-end">bank: ${{ team.bank_current }}</td>
+          <td class="text-end"><strong>${{ team.salary_current }}</strong></td>
+          <td class="text-end"><strong>{{ team.total_points }}</strong></td>
+          <td class="text-end"><strong>{{ team.yesterday }}</strong></td>
+          <td class="text-end"><strong>{{ team.recent }}</strong></td>
+          <td class="text-end"><a href="#top" class="btn btn-outline-primary btn-sm">top</a></td>
         </tr>
       </tbody>
     </table>

@@ -1,0 +1,39 @@
+
+    <!-- League Standings Section -->
+    <h2 id="standings" class="text-center">Standings</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-sm align-middle">
+          <thead class="align-middle">
+            <tr>
+              <th class="align-middle">Place</th>
+              <th class="align-middle text-center">Owner</th>
+              <th class="align-middle text-center">Team</th>
+              <th class="align-middle text-end">Points</th>
+              <th class="align-middle text-center"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for team_context in teams %}
+              {% set place = team_context.place %}
+              {% set team = team_context.team %}
+              <tr class="align-middle">
+                <td class="text-center">{{ place }}</td>
+                <td class="text-center">
+                  <a href="#{{ team.season}}_{{team.owner_id}}" class="text-decoration-none text-reset">{{ team.nickname }}</a>
+                </td>
+                <td class="text-center">
+                  <a href="#{{ team.season}}_{{team.owner_id}}" class="text-decoration-none text-reset">{{ team.team_name }}</a>
+                </td>
+                <td class="text-end">{{ team.total_points }}</td>
+                <td class="text-center">
+                  {% if team_context.owner_picture %}
+                    <img src="{{ team_context.owner_picture }}" alt="Owner Picture" style="max-height: 100px;">
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>

@@ -1,0 +1,20 @@
+    <!-- Two Dropdowns -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-2">
+          <select id="owner-selector" class="form-select" onchange="scrollToSection(this.value)">
+            <option value="">Owners</option>
+            {% for owner in owners_by_name %}
+              <option value="{{ season }}_{{ owner.id }}">{{ owner.display_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+    
+        <div class="col-md-6 mb-2">
+          <select id="leaderboard-selector" class="form-select" onchange="scrollToSection(this.value)">
+            <option value="">League Leaders</option>
+            {% for leaderboard in leaderboards %}
+              <option value="{{ leaderboard.id }}">{{ leaderboard.title }}</option>
+            {% endfor %}
+          </select>
+        </div>  
+    </div>

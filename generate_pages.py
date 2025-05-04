@@ -56,7 +56,7 @@ def generate_page(season, section):
     if section == "home":
 
         query = """
-            SELECT id, nickname AS display_name, recent, yesterday FROM owner_x_season_detail WHERE season = %s ORDER BY place ASC
+            SELECT id, nickname AS display_name, recent, yesterday, picture FROM owner_x_season_detail WHERE season = %s ORDER BY place ASC
         """
 
         owners = fetch_results(query, (season,))
@@ -83,7 +83,8 @@ def generate_page(season, section):
                 'team': team,
                 'place': ordinal_place(place),
                 'active_players': active_players,
-                'benched_players': benched_players
+                'benched_players': benched_players,
+                'owner_picture': row[4],
             })
 
             print(f"Processed {count}/{total_owners}: {team.nickname} - {team.team_name}")
@@ -174,16 +175,12 @@ def generate_page(season, section):
 
         for row in results:
 
-            # dt = datetime.fromisoformat(row['stamp'])
-
             dt = row['stamp']
 
             month = dt.strftime("%B")
             day = ordinal_place(dt.day)
 
             row['stamp'] = f"{month} {day}"
-
-            # row['stamp'] = row['stamp'].strftime("%B %-d")
         
         context = {
             'season': season,

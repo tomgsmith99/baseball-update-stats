@@ -1,0 +1,14 @@
+ 
+  <!-- Team Details Section -->
+  <h2 id="teams" class="mt-5">Teams</h2>
+
+  {% for team_context in teams %}
+    {% set team = team_context.team %}
+    {% set season = team_context.season %}
+    {% set place = team_context.place %}
+    {% set active_players = team_context.active_players %}
+    {% set benched_players = team_context.benched_players %}
+    <div id="{{ team.season }}_{{ team.owner_id }}">
+      {% include "_team-block.html" %}
+    </div>
+  {% endfor %}

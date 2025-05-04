@@ -2,108 +2,33 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container py-3">
 
-  <p>Last updated: {{ generated_at }}</p>
+  <div class="mx-auto" style="max-width: 600px;">
 
-  <!-- ✨ Two Dropdowns -->
-  <div class="row mb-4">
-    <div class="col-md-6 mb-2">
-      <select id="owner-selector" class="form-select" onchange="scrollToSection(this.value)">
-        <option value="">Owners</option>
-        {% for owner in owners_by_name %}
-          <option value="{{ season }}_{{ owner.id }}">{{ owner.nickname }}</option>
-        {% endfor %}
-      </select>
-    </div>
+    <p class="text-center">Last updated: {{ generated_at }}</p>
 
-    <div class="col-md-6 mb-2">
-      <select id="leaderboard-selector" class="form-select" onchange="scrollToSection(this.value)">
-        <option value="">League Leaders</option>
-        {% for leaderboard in leaderboards %}
-          <option value="{{ leaderboard['id'] }}">{{ leaderboard['title'] }}</option>
-        {% endfor %}
-      </select>
-    </div>  
+    <section aria-labelledby="in-season-dropdowns">
+      <!-- Dropdowns -->
+      {% include "_in-season-dropdowns.html" %}
+    </section>
+
+    <section aria-labelledby="standings">
+      <!-- Standings -->
+      {% include "_standings.html" %}
+    </section>
+
+    <section aria-labelledby="standings">
+      <!-- League Leaders -->
+      {% include "_league-leaders.html" %}
+    </section>
+
+    <section aria-labelledby="team-details">
+      <!-- Team Details -->
+      {% include "_team-details-section.html" %}
+    </section>
+
   </div>
-
-  <!-- League Standings Section -->
-  <h2 id="standings">League Standings</h2>
-
-  <table class="table table-striped table-sm">
-    <thead>
-      <tr>
-        <th>Place</th>
-        <th>Owner</th>
-        <th>Team</th>
-        <th>Points</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for team_context in teams %}
-        {% set place = team_context.place %}
-        {% set team = team_context.team %}
-        <tr>
-          <td>{{ place }}</td>
-          <td class="text-center"><a href="#{{ team.season}}_{{team.owner_id}}">{{ team.nickname }}</a></td>
-          <td class="text-center"><a href="#{{ team.season}}_{{team.owner_id}}">{{ team.team_name }}</a></td>
-          <td class="text-right">{{ team.total_points }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <!-- League Leaders Section -->
-  <div class="leaderboards">
-    {% for leaderboard in leaderboards %}
-    <div class="leaderboard-section">
-      <h4 id="{{ leaderboard.id }}" class="mt-4">{{ leaderboard.title }}</h4>
-      <table class="table table-sm table-striped leaderboard-table">
-        <colgroup>
-          <col style="width: 10%;">
-          <col style="width: 60%;">
-          <col style="width: 30%;">
-        </colgroup>
-        <thead>
-          <tr>
-            <th></th>
-            <th>{{ leaderboard['item_type']|capitalize }}</th>
-            <th>{{ leaderboard['field']|capitalize }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in leaderboard['items'] %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>
-              <a href="{% if leaderboard['item_type'] == 'owner' %}#{{ season }}_{{ item.id }}{% else %}/players/{{ item.id }}{% endif %}">
-                {{ item.display_name }}
-              </a>
-            </td>
-            <td class="text-right">
-              {{ item[leaderboard['field']] }}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <a href="#top">top</a>
-    </div>
-    {% endfor %}
-  </div>  
-  <!-- Team Details Section -->
-  <h2 id="teams" class="mt-5">Teams</h2>
-
-  {% for team_context in teams %}
-    {% set team = team_context.team %}
-    {% set season = team_context.season %}
-    {% set place = team_context.place %}
-    {% set active_players = team_context.active_players %}
-    {% set benched_players = team_context.benched_players %}
-    <div id="{{ team.season }}_{{ team.owner_id }}">
-      {% include "team_block.html" %}
-    </div>
-  {% endfor %}
 
 </div>
 

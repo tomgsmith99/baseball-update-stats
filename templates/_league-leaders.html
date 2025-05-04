@@ -1,0 +1,41 @@
+
+  <!-- League Leaders Section -->
+  <div class="leaderboards">
+    {% for leaderboard in leaderboards %}
+    <div class="leaderboard-section">
+      <h4 id="{{ leaderboard.id }}" class="mt-4">{{ leaderboard.title }}</h4>
+      <table class="table table-sm table-striped leaderboard-table">
+        <colgroup>
+          <col style="width: 10%;">
+          <col style="width: 60%;">
+          <col style="width: 30%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>{{ leaderboard.item_type|capitalize }}</th>
+            <th class = "text-center">{{ leaderboard.field|capitalize }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in leaderboard['items'] %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>
+              <a href="{% if leaderboard.item_type == 'owner' %}#{{ season }}_{{ item.id }}{% else %}/players/{{ item.id }}{% endif %}" class="text-decoration-none text-reset">
+                {{ item.display_name }}
+              </a>
+            </td>
+            <td class="text-center">
+              {{ item[leaderboard.field] }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-end mt-2">
+        <a href="#top" class="btn btn-outline-primary btn-sm">top</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
